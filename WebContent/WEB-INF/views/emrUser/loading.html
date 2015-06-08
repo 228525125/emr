@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>Top Manager</title>
+	<style type="text/css">
+	#loading{
+        position:absolute;
+        left:45%;
+        top:40%;
+        padding:2px;
+        z-index:20001;
+        height:auto;
+        border:1px solid #ccc;
+    }
+    #loading a {
+        color:#225588;
+    }
+    #loading .loading-indicator{
+        background:white;
+        color:#444;
+        font:bold 13px tahoma,arial,helvetica;
+        padding:10px;
+        margin:0;
+        height:auto;
+    }
+    #loading-msg {
+        font: normal 10px arial,tahoma,sans-serif;
+    }
+	</style>
+</head>
+
+<body>
+<br><br>
+<div id="loading">
+    <div class="loading-indicator"><img src="plugins/extjs/ext-2.0/resources/images/default/shared/large-loading.gif" width="32" height="32" style="margin-right:8px;float:left;vertical-align:top;"/>图文档管理系统 - <a href="#">九环机电</a><br /><span id="loading-msg"></span></div>
+</div>
+
+<div id="yui-main">
+        <div id="body" class="yui-b">
+		<div id="sample-spacer" style="height:800px;"></div>
+		<link rel="stylesheet" type="text/css" href="plugins/extjs/ext-2.0/resources/css/ext-all.css" />
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = '加 载 核 心  接 口 ...';</script>
+		<script type="text/javascript" src="plugins/extjs/ext-2.0/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = '加 载 用 户 数 据 ...';</script>
+		<script type="text/javascript" src="plugins/extjs/ext-2.0/ext-all.js"></script>
+		<script type="text/javascript">document.getElementById('loading-msg').innerHTML = ' 初 始 化 ...';</script>
+		<script type="text/javascript">  
+			window.location.href='frame.do';
+		</script>
+
+		<div style="clear:left;"></div>
+
+    	</div>
+</div>
+</body>
+</html>

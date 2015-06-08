@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">  
+  <bean id="domeService" class="com.mhsoft.emr.service.impl.DomeServiceImpl"> 
+    <property name="domeDao" ref="domeDao"/> 
+  </bean>
+  <bean id="glossaryService" class="com.mhsoft.emr.service.impl.GlossaryServiceImpl"> 
+    <property name="glossaryDao" ref="glossaryDao"/> 
+  </bean>
+  <bean id="emrUserService" class="com.mhsoft.emr.service.impl.EmrUserServiceImpl"> 
+    <property name="emrUserDao" ref="emrUserDao"/> 
+  </bean>
+  <bean id="dataLimitService" class="com.mhsoft.emr.service.impl.DataLimitServiceImpl"> 
+    <property name="dataLimitDao" ref="dataLimitDao"/> 
+  </bean>  
+  <bean id="departmentService" class="com.mhsoft.emr.service.impl.DepartmentServiceImpl"> 
+    <property name="departmentDao" ref="departmentDao"/> 
+  </bean>  
+  <bean id="employeeService" class="com.mhsoft.emr.service.impl.EmployeeServiceImpl"> 
+    <property name="employeeDao" ref="employeeDao"/> 
+  </bean>  
+  <bean id="moduleService" class="com.mhsoft.emr.service.impl.ModuleServiceImpl"> 
+    <property name="moduleDao" ref="moduleDao"/> 
+  </bean>  
+  <bean id="operateLimitService" class="com.mhsoft.emr.service.impl.OperateLimitServiceImpl"> 
+    <property name="operateLimitDao" ref="operateLimitDao"/> 
+  </bean>  
+  <bean id="organizationService" class="com.mhsoft.emr.service.impl.OrganizationServiceImpl"> 
+    <property name="organizationDao" ref="organizationDao"/> 
+  </bean>  
+  <bean id="roleService" class="com.mhsoft.emr.service.impl.RoleServiceImpl"> 
+    <property name="roleDao" ref="roleDao"/> 
+  </bean>  
+  <bean id="stationService" class="com.mhsoft.emr.service.impl.StationServiceImpl"> 
+    <property name="stationDao" ref="stationDao"/> 
+  </bean>
+  <bean id="weishengjuService" class="com.mhsoft.emr.service.impl.WeishengjuServiceImpl"> 
+    <property name="weishengjuDao" ref="weishengjuDao"/> 
+  </bean>
+  <bean id="fileClassService" class="com.mhsoft.emr.service.impl.FileClassServiceImpl"> 
+    <property name="fileClassDao" ref="fileClassDao"/> 
+  </bean>
+  <bean id="maxidService" class="com.mhsoft.emr.service.impl.MaxidServiceImpl"> 
+    <property name="maxidDao" ref="maxidDao"/> 
+  </bean>
+</beans>

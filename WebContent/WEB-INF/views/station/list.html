@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>Station管理</title>
+<link rel="stylesheet" type="text/css" href="plugins/extjs/ext-3.2/resources/css/ext-all.css" />
+<script type="text/javascript" src="plugins/extjs/ext-3.2/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="plugins/extjs/ext-3.2/ext-all.js"></script>
+<script type="text/javascript" src="plugins/extjs/easyjf/core.js"></script>
+<script type="text/javascript">
+	Ext.BLANK_IMAGE_URL = 'plugins/extjs/ext-3.2/resources/images/default/s.gif';
+</script>
+</head>
+
+<body>
+<div id="loading">
+	<div class="loading-indicator"><img src="images/extanim32.gif" width="32" height="32" style="margin-right:8px;" align="absmiddle"/>Loading...</div>
+</div>
+<script defer="defer" type="text/javascript">
+
+StationPanel=Ext.extend(EasyJF.Ext.CrudPanel,{
+	id:"stationPanel",
+	title:"Station管理",
+	baseUrl:"station.ejf",
+	createForm:function(){
+	var formPanel=new Ext.form.FormPanel({
+		frame:true,
+		labelWidth:70,
+		labelAlign:'right',
+		defaultType:'textfield',
+                        defaults:{width:200},
+                        items:[{xtype:"hidden",name:"id"},
+{fieldLabel:'code',name:'code'},
+	{fieldLabel:'name',name:'name'},
+	{fieldLabel:'auxCode',name:'auxCode'},
+	{fieldLabel:'disabled',name:'disabled'},
+	{fieldLabel:'description',name:'description'}
+	
+                        ]
+	});
+
+		return formPanel;
+    },
+    createWin:function()
+    {
+    	return this.initWin(438,300,"Station管理");
+    },
+    storeMapping:["id",
+    "code","name","auxCode","disabled","description"	],
+	initComponent : function(){
+    this.cm=new Ext.grid.ColumnModel([
+{header: "code", sortable:true,width: 300, dataIndex:"code"},
+{header: "name", sortable:true,width: 300, dataIndex:"name"},
+{header: "auxCode", sortable:true,width: 300, dataIndex:"auxCode"},
+{header: "disabled", sortable:true,width: 300, dataIndex:"disabled"},
+{header: "description", sortable:true,width: 300, dataIndex:"description"}
+        ]);
+	StationPanel.superclass.initComponent.call(this);
+}     
+});
+ 
+
+Ext.onReady(function(){	
+	var panel=new StationPanel();
+	setTimeout(function(){
+        Ext.get('loading').fadeOut({remove:true});
+    }, 300);
+	var viewport = new Ext.Viewport({
+        layout:'fit',
+        items:[panel]
+    });
+	panel.store.load();
+});
+
+</script>
+</body>
+</html>

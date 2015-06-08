@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>Dome管理</title>
+<link rel="stylesheet" type="text/css" href="plugins/extjs/ext-3.2/resources/css/ext-all.css" />
+<script type="text/javascript" src="plugins/extjs/ext-3.2/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="plugins/extjs/ext-3.2/ext-all.js"></script>
+<script type="text/javascript" src="plugins/extjs/easyjf/core.js"></script>
+<script type="text/javascript">
+	Ext.BLANK_IMAGE_URL = '$html.extjs2Path()/resources/images/default/s.gif';
+	pgSize = 22;
+</script>
+</head>
+
+<body>
+<div id="loading">
+	<div class="loading-indicator"><img src="images/extanim32.gif" width="32" height="32" style="margin-right:8px;" align="absmiddle"/>Loading...</div>
+</div>
+<script defer="defer" type="text/javascript">
+
+DomePanel=Ext.extend(EasyJF.Ext.CrudPanel,{
+	id:"domePanel",
+	title:"Dome管理",
+	baseUrl:"dome.ejf",
+	createForm:function(){
+	var formPanel=new Ext.form.FormPanel({
+		frame:true,
+		labelWidth:70,
+		labelAlign:'right',
+		defaultType:'textfield',
+                        defaults:{width:200},
+                        items:[{xtype:"hidden",name:"id"},
+{fieldLabel:'text',name:'text'}
+	
+                        ]
+	});
+
+		return formPanel;
+    },
+    createWin:function()
+    {
+    	return this.initWin(438,300,"Dome管理");
+    },
+    storeMapping:["id",
+    "text"	],
+	initComponent : function(){
+    this.cm=new Ext.grid.ColumnModel([
+{header: "text", sortable:true,width: 300, dataIndex:"text"}
+        ]);
+	DomePanel.superclass.initComponent.call(this);
+}     
+});
+ 
+
+Ext.onReady(function(){	
+	var panel=new DomePanel();
+	setTimeout(function(){
+        Ext.get('loading').fadeOut({remove:true});
+    }, 300);
+	var viewport = new Ext.Viewport({
+        layout:'fit',
+        items:[panel]
+    });
+	panel.store.load();
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="plugins/extjs/css/progress-bar.css" />
+#parse("/link_share.html")
+</head>
+<body>
+	<div id="Progress" style="width: 200px"></div>
+</body>
+</html>
+<script type="text/javascript">
+	Ext.onReady(function(){
+		var pbar4 = new Ext.ProgressBar({
+	        text:'>>>>0%<<<<',
+	        id:'pbar4',	        
+	        cls:'custom',
+	        renderTo:'Progress'
+	    });
+
+	    pbar4.updateProgress(0.5,Math.round(100*0.5)+'% completed...');
+	});
+</script>

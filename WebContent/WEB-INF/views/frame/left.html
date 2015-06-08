@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+#parse("/link_share.html")
+</head>
+<body>
+<div id="menu_tree"></div>
+</body>
+</html>
+
+<script type="text/javascript">
+
+	Ext.QuickTips.init();
+	Ext.Ajax.timeout = 10 * 60 * 1000;// 10分钟，默认为30秒  设置加载数据超时最大值
+	
+	Ext.onReady(function(){
+		var zuzhijiagou = new Ext.tree.TreeNode({    //基础信息
+			id:'zuzhijiagou',
+			iconCls:'folderIcon',
+			text:'功能树'
+		});
+
+		var zuzhijigou = new Ext.tree.TreeNode({    //组织机构
+			id:'zuzhijigou',
+			iconCls:'appIcon',
+			text:'组织机构',
+			//href:'javascript:window.parent.document.getElementById(\'rightFrame\').src=\'dome.do\'',
+			href:'organization.do',
+			hrefTarget:'rightFrame' 
+		});
+
+		var bumen = new Ext.tree.TreeNode({           //物料
+			id:'bumen',
+			iconCls:'appIcon',
+			text:'物料',
+			href:'department.do',
+			hrefTarget:'rightFrame'
+		});		
+
+		/*var gongnengmokuai = new Ext.tree.TreeNode({           //功能模块
+			id:'gongnengmokuai',
+			iconCls:'appIcon',
+			text:'功能模块',
+			href:'module.do',
+			hrefTarget:'rightFrame'
+		});
+
+		var caozuoquanxian = new Ext.tree.TreeNode({            //操作权限
+			id:'caozuoquanxian',
+			iconCls:'appIcon',
+			text:'操作权限',
+			href:'operateLimit.do',
+			hrefTarget:'rightFrame'
+		});
+
+		var shujuquanxian = new Ext.tree.TreeNode({             //数据权限
+			id:'shujuquanxian',
+			iconCls:'appIcon',
+			text:'数据权限',
+			href:'dataLimit.do',
+			hrefTarget:'rightFrame'
+		});*/
+
+		var yonghuxinxi = new Ext.tree.TreeNode({               //文件
+			id:'yonghuxinxi',
+			iconCls:'appIcon',
+			text:'文件',
+			href:'employee.do',
+			hrefTarget:'rightFrame'
+		});
+
+		var jiaose = new Ext.tree.TreeNode({                     //工位
+			id:'jiaose',
+			iconCls:'appIcon',
+			text:'工位',
+			href:'role.do',
+			hrefTarget:'rightFrame'
+		});
+
+		var fileclass = new Ext.tree.TreeNode({                     //文件类型
+			id:'fileclass',
+			iconCls:'appIcon',
+			text:'文件类型',
+			href:'fileClass.do',
+			hrefTarget:'rightFrame'
+		});
+
+		var search = new Ext.tree.TreeNode({                     //查询
+			id:'search',
+			iconCls:'appIcon',
+			text:'文档查询',
+			href:'employee.do?cmd=search',
+			hrefTarget:'rightFrame'
+		});
+		
+		var lookup = new Ext.tree.TreeNode({                     //查询
+			id:'lookup',
+			iconCls:'appIcon',
+			text:'目录查询',
+			href:'employee.do?cmd=lookup',
+			hrefTarget:'rightFrame'
+		});
+
+		var log = new Ext.tree.TreeNode({                     //查询
+			id:'log',
+			iconCls:'appIcon',
+			text:'日志',
+			href:'employee.do?cmd=log',
+			hrefTarget:'rightFrame'
+		});
+
+		/*var xitongziyuan = new Ext.tree.TreeNode({    //系统资源
+			id:'xitongziyuan',
+			iconCls:'folderIcon',
+			text:'系统资源'
+		});
+
+		var weishengju = new Ext.tree.TreeNode({       //卫生局信息
+			id:'weishengju',
+			iconCls:'appIcon',
+			text:'卫生局',
+			href:'weishengju.do',
+			hrefTarget:'rightFrame'
+		});
+
+		var jibendangan = new Ext.tree.TreeNode({       //基本档案
+			id:'jibendangan',
+			iconCls:'folderIcon',
+			text:'基本档案'
+		});*/
+
+		//zuzhijiagou.appendChild(zuzhijigou);
+		zuzhijiagou.appendChild(bumen);
+		zuzhijiagou.appendChild(jiaose);
+		zuzhijiagou.appendChild(yonghuxinxi);
+		zuzhijiagou.appendChild(fileclass);
+		zuzhijiagou.appendChild(search);
+		zuzhijiagou.appendChild(lookup);
+		zuzhijiagou.appendChild(log);
+		/*xitongziyuan.appendChild(gongnengmokuai);
+		xitongziyuan.appendChild(caozuoquanxian);
+		xitongziyuan.appendChild(shujuquanxian);	
+		jibendangan.appendChild(weishengju);*/	
+
+		var xtsz1 = new Ext.tree.TreePanel({         //组织架构树
+			root:zuzhijiagou,
+			border:false
+		});
+
+		/*var xtsz2 = new Ext.tree.TreePanel({         //系统资源树
+			root:xitongziyuan,
+			border:false
+		});
+
+		var xtsz3 = new Ext.tree.TreePanel({          //基本档案
+			root:jibendangan,
+			border:false
+		});*/
+		
+		var menu = new Ext.Panel({
+		    id:'tree-panel',
+		    title:'功能菜单',
+		    split:true,		    
+		    collapsible: true,
+		    //margins:'3 3 3 3',
+		    layout:'accordion',
+		    layoutConfig:{
+		        animate:true
+		    },
+		    items: [{
+		        title:'系统设置',
+		        border:false,
+		        items:[				    
+					xtsz1/*,
+					xtsz2,
+					xtsz3*/                                   
+		        ],
+		        iconCls:'exampleIcon'
+		    }/*,{
+		    	title:'演示及帮助',
+		    	items:[
+					jcxx_blmb
+		    	],
+		    	border:false,
+		    	iconCls:'docsIcon'
+		    }*/]
+		});
+
+		new Ext.Viewport({
+			layout:'fit',
+			items:[menu]
+		});
+	});
+</script>

@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>dome</title>
+#parse("/link_share.html")
+<script type="text/javascript" src="plugins/extjs/emr/dome/dome.js"></script>
+</head>
+<body>
+<!-- 
+<object   codebase= "plugins/ocx/DiDaGrid.ocx#version=3,9,0,1 "   classid= "clsid:0F1447E7-E416-4691-9FEC-A8C4E1ACFB7D"   width= "956 "   height= "600 "   id= "obj "> 
+</object>
+ -->
+ <div id="grid-panel"></div>
+ <div id="btn"></div>
+</body>
+</html>
+<script type="text/javascript">
+
+	Ext.QuickTips.init();
+	Ext.Ajax.timeout = 10 * 60 * 1000;// 10分钟，默认为30秒  设置加载数据超时最大值
+
+	Ext.onReady(function(){
+
+		/*var panel=new Ext.Panel({
+            title: '销售网点',
+            region: 'west',
+            //split: true,
+            width: 200,
+            html:'adfa',
+            //collapsible: true,
+            margins:'3 0 3 3',
+            cmargins:'3 3 3 3'
+        });
+
+		this.viewpanel=new Ext.Panel({
+			title:'mypanel',
+			html:'dadfa',
+            region: 'center',
+            margins:'3 3 3 0', 
+            //layout:'fit',
+            defaults:{autoScroll:true}
+        });*/
+		
+		/*new Ext.Viewport({
+			layout:'fit',
+			items:[
+				new DynamicGrid({
+					id: 'dynamicgrid',
+					title:'动态表格'
+					
+				})
+			]
+		});*/
+
+		createDynamicGrid({
+			url:'dome.do?cmd=items',
+			params:{
+				totalSQL:'select count(id) from module where 1=1 &1',           //记录总数
+				querySQL:"select CAST(id as varchar(20)) as id,code,name,CASE disabled WHEN 1 THEN '是' ELSE '否' END as disabled,description from Module where 1=1 &1  union select 'id','编号','模块名称','禁用','描述'",  //查询语句
+				isCallable:false,         //是否是存储过程
+				queryFields:'id,code,name',   //SearchField 查询条件搜索字段
+				qType:'ajax'                  // ajax与store返回值有区别
+			},
+			title:'动态表格',
+			id:'dynamicgrid',
+			applyTo:'grid-panel',
+			height:500,
+			width:500
+		});
+		
+	});
+	
+</script>

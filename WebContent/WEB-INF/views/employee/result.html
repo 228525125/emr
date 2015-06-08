@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+</head>
+<body>
+#foreach($file in $files )
+<!-- <p><img src="$file"/></p>  -->
+<embed width="100%" height="100%" src="$file"> </embed>  
+<!-- 
+<object   classid="clsid:CA8A9780-280D-11CF-A24D-444553540000"  width="500"   height="500"   border="0">
+ 	<param name="BorderStyle" value="1" />
+          <param name="MousePointer" value="0" />
+          <param name="Enabled" value="1" />
+          <param name="Min" value="0" />
+          <param name="Max" value="10" />    
+<param   name="src"   value="$file">     
+</object>
+
+<a href="$file"><font style="font-size: 12px;">下载</font></a>
+-->
+<!-- <iframe src="$file" width="100%" height="100%"></iframe> -->
+#end
+</body>
+</html>

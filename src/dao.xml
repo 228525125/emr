@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">  
+  <bean id="domeDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IDomeDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.Dome</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>
+  <bean id="glossaryDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IGlossaryDAO</value> 
+    </property> 
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.Glossary</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>
+  <bean id="emrUserDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IEmrUserDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.EmrUser</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>
+  <bean id="dataLimitDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IDataLimitDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.DataLimit</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>  
+  <bean id="departmentDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IDepartmentDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.Department</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>  
+  <bean id="employeeDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IEmployeeDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.Employee</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>  
+  <bean id="moduleDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IModuleDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.Module</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>  
+  <bean id="operateLimitDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IOperateLimitDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.OperateLimit</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>  
+  <bean id="organizationDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IOrganizationDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.Organization</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>  
+  <bean id="roleDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IRoleDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.Role</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>  
+  <bean id="stationDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IStationDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.Station</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>
+  <bean id="weishengjuDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IWeishengjuDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.Weishengju</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>
+  <bean id="fileClassDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IFileClassDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.FileClass</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>
+  <bean id="maxidDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.IMaxidDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.Maxid</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>
+  
+  <!-- JDBC dao -->
+  <bean id="jdbcQueryDao" class="com.mhsoft.emr.dao.impl.JDBCQueryDaoImpl">
+  	<property name="dataSource" ref="dataSource"></property>
+  </bean>
+  
+  <!-- JPA dao -->
+  <bean id="permissionDao" class="com.mhsoft.emr.dao.impl.PermissionDAO">
+  	<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+  </bean>
+   
+  <!-- 自动加载关联对象 -->
+  <bean id="jpaPoLoader" class="com.easyjf.core.dao.impl.JpaPOLoaderImpl">
+  	<property name="entityManagerFactory" ref="entityManagerFactory" />
+  </bean>
+
+</beans>

@@ -1,0 +1,242 @@
+<link rel="stylesheet" type="text/css" href="plugins/extjs/ext-3.2/resources/css/ext-all.gzcss" />
+<link rel="stylesheet" type="text/css" href="plugins/extjs/ext-3.2/examples/ux/css/ux-all.gzcss" />
+<link rel="stylesheet" type="text/css" href="plugins/extjs/ext-3.2/resources/css/xtheme-gray.gzcss" />
+<script type="text/javascript" src="plugins/extjs/ext-3.2/adapter/ext/ext-base.gzjs"></script>
+<script type="text/javascript" src="plugins/extjs/ext-3.2/ext-all.gzjs"></script>
+<!-- <script type="text/javascript" src="plugins/extjs/ext-3.2/ext-all-debug.js"></script>  -->
+<script type="text/javascript" src="plugins/extjs/ext-3.2/examples/ux/ux-all.gzjs"></script>
+<script type="text/javascript" src="plugins/extjs/easyjf/core.js"></script>
+<script type="text/javascript" src="plugins/extjs/emr/share/ComboBoxTree.js"></script>
+<script type="text/javascript" src="plugins/extjs/emr/share/RowExpander.js"></script>
+<script type="text/javascript" src="plugins/extjs/emr/share/SearchField.js"></script>
+<script type="text/javascript" src="plugins/extjs/emr/share/global.js"></script>
+<script type="text/javascript">
+	Ext.BLANK_IMAGE_URL = 'plugins/extjs/ext-3.2/resources/images/default/s.gif';
+	Ext.chart.Chart.CHART_URL = 'plugins/extjs/ext-3.2/resources/charts.swf';
+	function copyToClipboard(txt) {   
+	       if(window.clipboardData) {   
+	               window.clipboardData.clearData();   
+	               window.clipboardData.setData("Text", txt);
+	             alert("复制成功");   
+	       } else if(navigator.userAgent.indexOf("Opera") != -1) {   
+	            window.location = txt;   
+	       } else if (window.netscape) {   
+	            try {   
+	                 netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");   
+	            } catch (e) {   
+	                 alert("如果您正在使用FireFox！\n请在浏览器地址栏输入'about:config'并回车\n然后将 'signed.applets.codebase_principal_support'设置为'true'");   
+	            }   
+	            var clip = Components.classes['@mozilla.org/widget/clipboard;1'].createInstance(Components.interfaces.nsIClipboard);   
+	            if (!clip)   
+	                 return;   
+	            var trans = Components.classes['@mozilla.org/widget/transferable;1'].createInstance(Components.interfaces.nsITransferable);   
+	            if (!trans)   
+	                 return;   
+	            trans.addDataFlavor('text/unicode');   
+	            var str = new Object();   
+	            var len = new Object();   
+	            var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString);   
+	            var copytext = txt;   
+	            str.data = copytext;   
+	            trans.setTransferData("text/unicode",str,copytext.length*2);   
+	            var clipid = Components.interfaces.nsIClipboard;   
+	            if (!clip)   
+	                 return false;   
+	            clip.setData(trans,null,clipid.kGlobalClipboard);   
+	            alert("复制成功！")   
+	       }   
+	}
+
+	/*
+	 * 格式化实数
+	 */
+	function decimalFormat(number, precision) {
+		  var str = "" + number;
+		  var i;
+		  if(0<str.indexOf(".")){
+		  	  i = str.indexOf(".");
+		  	  return Number(str.substring(0,i+1+precision));
+		  }else{
+			  return number;
+		  }
+	}
+
+	/**     
+	* 对Date的扩展，将 Date 转化为指定格式的String     
+	* 月(M)、日(d)、12小时(h)、24小时(H)、分(m)、秒(s)、周(E)、季度(q) 可以用 1-2 个占位符     
+	* 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)     
+	* eg:     
+	* (new Date()).pattern("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423     
+	* (new Date()).pattern("yyyy-MM-dd E HH:mm:ss") ==> 2009-03-10 二 20:09:04     
+	* (new Date()).pattern("yyyy-MM-dd EE hh:mm:ss") ==> 2009-03-10 周二 08:09:04     
+	* (new Date()).pattern("yyyy-MM-dd EEE hh:mm:ss") ==> 2009-03-10 星期二 08:09:04     
+	* (new Date()).pattern("yyyy-M-d h:m:s.S") ==> 2006-7-2 8:9:4.18     
+	*/
+	Date.prototype.pattern=function(fmt) {        
+        var o = {        
+        "M+" : this.getMonth()+1, //月份        
+        "d+" : this.getDate(), //日        
+        "h+" : this.getHours()%12 == 0 ? 12 : this.getHours()%12, //小时        
+        "H+" : this.getHours(), //小时        
+        "m+" : this.getMinutes(), //分        
+        "s+" : this.getSeconds(), //秒        
+        "q+" : Math.floor((this.getMonth()+3)/3), //季度        
+        "S" : this.getMilliseconds() //毫秒        
+        };        
+        var week = {        
+        "0" : "\u65e5",        
+        "1" : "\u4e00",        
+        "2" : "\u4e8c",        
+        "3" : "\u4e09",        
+        "4" : "\u56db",        
+        "5" : "\u4e94",        
+        "6" : "\u516d"     
+        };        
+        if(/(y+)/.test(fmt)){        
+                fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));        
+        }        
+        if(/(E+)/.test(fmt)){        
+                fmt=fmt.replace(RegExp.$1, ((RegExp.$1.length>1) ? (RegExp.$1.length>2 ? "\u661f\u671f" : "\u5468") : "")+week[this.getDay()+""]);        
+        }        
+        for(var k in o){        
+                if(new RegExp("("+ k +")").test(fmt)){        
+                        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));        
+                }        
+        }        
+        return fmt;        
+}
+
+	/*
+	 * 根据不同的分辨率调整表格pageSize
+	 */
+	var pgSize=999;
+	var iframeWidth = 780;
+	var iframeHeight = 600;
+	if(1024<=screen.height){
+		pgSize=32;
+		iframeHeight = 720;
+	}else if(1024>screen.height&&900<=screen.height){
+		pgSize=26;
+		iframeHeight = 600;
+	}else if(900>screen.height&&800<=screen.height){
+		pgSize=21;
+		iframeHeight = 500;
+	}else if(800>screen.height&&768<=screen.height){
+		pgSize=20;
+		iframeHeight = 400;
+	}
+	
+	
+	if(1440<=screen.width){
+		iframeWidth = 1280;
+	}else if(1360<screen.width&&1440>=screen.width){
+		iframeWidth = 1120;
+	}else if(1280<screen.width&&1360>=screen.width){
+		iframeWidth = 1024;
+	}else if(1024<screen.width&&1280>=screen.width){		
+		iframeWidth = 980;
+	}else if(1024>=screen.width){		
+		iframeWidth = 780;
+	}
+
+	// 自定义条件的记录格式
+	var Row = Ext.data.Record.create([
+	    {name: 'join', type: 'string'},
+	    {name: 'item', type: 'string'},
+	    {name: 'expression', type: 'string'},
+	    {name: 'value', type: 'string'}		       
+	]);
+		
+</script>
+<style type="text/css">
+	.pluginIcon{
+   	   background-image:url(images/fam/plugin.gif) !important;
+	}
+	.cmpIcon{
+   	   background-image:url(images/fam/cmp.gif) !important;
+	}
+	.connectIcon{
+	   background-image:url(images/fam/connect.gif) !important;
+	}
+	.commentIcon{
+	   background-image:url(images/fam/user_comment.png) !important;
+	}
+	.cogIcon{
+	   background-image:url(images/fam/cog.png) !important;
+	}
+	.cogeditIcon{
+	   background-image:url(images/fam/cog_edit.gif) !important;
+	}
+	.gridIcon{
+	   background-image:url(images/fam/grid.png) !important;
+	}
+	.itemsIcon{
+	   background-image:url(images/fam/list-items.gif) !important;
+	}
+	.docsIcon{
+	   background-image:url(images/fam/docs.gif) !important;
+	}
+	.forumIcon{
+	   background-image:url(images/fam/forum.gif) !important;
+	}
+	.exampleIcon{
+	   background-image:url(images/fam/example.gif) !important;
+	}
+	.userIcon{
+		background-image:url(images/fam/user.gif) !important;
+	}
+	.addIcon{
+		background-image:url(images/fam/add.gif) !important;
+	}
+	.saveIcon{
+		background-image:url(images/fam/save.gif) !important;
+	}
+	.deleteIcon{
+		background-image:url(images/fam/delete.gif) !important;
+	}
+	.toolsIcon{
+		background-image:url(images/fam/folder_wrench.gif) !important;
+	}
+	.folderIcon{
+		background-image:url(images/fam/folder_go.gif) !important;
+	}
+	.qiehuanIcon{
+		background-image:url(images/fam/qiehuan.gif) !important;
+	}
+	.logoutIcon{
+		background-image:url(images/fam/logout.gif) !important;
+	}
+	.usersIcon{
+		background-image:url(images/fam/users.gif) !important;
+	}
+	.refreshIcon{
+		background-image:url(images/fam/table_refresh.gif) !important;
+	}
+	.gearsIcon{
+		background-image:url(images/fam/gears.png) !important;
+	}
+	.editIcon{
+		background-image:url(images/fam/edit.gif) !important;
+	}
+	.yanshiIcon{
+		background-image:url(images/fam/yanshi.png) !important;
+	}
+	.feedIcon{
+		background-image:url(images/fam/feed_add.png) !important;
+	}
+	.rssIcon{
+		background-image:url(images/fam/rss_go.png) !important;
+	}
+	.appIcon{
+		background-image:url(images/fam/application_go.gif) !important;		
+	}
+	.uploadIcon{
+		background-image:url(images/fam/box_upload.png) !important;
+	}
+	<!-- 用于表单横向布局 -->
+	.allow-float {clear:none!important;} /* 允许该元素浮动 */
+	.stop-float {clear:both!important;} /* 阻止该元素浮动 */
+	.style-float {float:left;}
+	.style-pad-float {float:left;padding:0 0 0 0;}	
+	.style-mar-float {float:left;margin:0 10px 0 10px;}
+</style>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<table border="1" width="100%">
+		<tr>
+			<th>文件名</th>
+			<th>下载</th>
+			<th>操作</th>
+		</tr>
+		#foreach($file in $files )
+		<tr>
+			<td>$file.name</td>
+			<td><a href="$file.download">下载</a></td>
+			<td><a href="employee.do?cmd=deletefile&path=$file.path&name=$file.name">删除</a>
+		</tr>
+		#end
+	</table>
+</body>
+</html>
