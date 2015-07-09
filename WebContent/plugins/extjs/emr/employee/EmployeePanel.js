@@ -14,7 +14,7 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
 		if(!this.win||null==this.win){
 			this.win = new Ext.Window({
 				width:360,
-				height:370,
+				height:400,
 				layout:'fit',
 				buttonAlign:"center",
 				title:'编辑文件信息',
@@ -92,7 +92,7 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
 		this.store = new Ext.data.JsonStore({
 			url: 'employee.do?cmd=list',
 			root:"result",
-			fields:["id","code","name","fileClass","auxCode","disabled","description","address","department","departmentCode","departmentId","empty","selected","version","extraEmpty"],
+			fields:["id","code","name","fileClass","auxCode","disabled","description","address","department","departmentCode","departmentId","empty","selected","version","extraEmpty","cite"],
 			listeners:{
 				'beforeload': {fn:function(storeThis,option){
 					storeThis.removeAll();
@@ -133,6 +133,11 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
             id: '0',                      //分别表示机构编号、部门编号   	
 			expanded:true
 		});
+		
+		this.sm = new Ext.grid.CheckboxSelectionModel({
+	    	dataIndex:'select',
+	    	singleSelect:true
+	    });
 	
         this.items = [
             {
@@ -202,8 +207,9 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                 layout: 'fit',
                 items: [
                     {
-                        xtype: 'grid',
-                        
+                        xtype: 'editorgrid',
+                        clicksToEdit:1,
+                        sm: this.sm,
                         border: false,
                         loadMask: true,
                         trackMouseOver: false,
@@ -214,32 +220,35 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                         },                        
                         id: 'employeegrid',
                         columns: [
+                            this.sm,
                             {
                                 xtype: 'gridcolumn',
                                 dataIndex: 'code',
                                 header: '编码',
                                 sortable: true,
-                                width: 150
+                                width: 120,
+                                editor: new Ext.form.TextField()
                             },
                             {
                                 xtype: 'gridcolumn',
                                 header: '名称',
                                 sortable: true,
-                                width: 80,
+                                width: 200,
                                 dataIndex: 'name'
                             },
                             {
                                 xtype: 'gridcolumn',
-                                header: '名称',
+                                header: '描述',
                                 sortable: true,
-                                width: 80,
+                                width: 150,
                                 dataIndex: 'description'
                             },
                             {
                                 xtype: 'gridcolumn',
                                 header: '文件类型',
                                 sortable: true,
-                                width: 80,
+                                hidden: true,
+                                width: 50,
                                 dataIndex: 'fileClass',
                                 renderer:function(value){if(value&&null!=value){return value.name;}else{return '';}}
                             },
@@ -248,6 +257,7 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                                 header: '所属物料',
                                 sortable: false,
                                 width: 100,
+                                hidden: true,
                                 dataIndex: 'department'/*,
                                 renderer:function(value){if(value&&null!=value){return value.name;}else{return '';}}*/
                             },
@@ -265,9 +275,17 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                                 xtype: 'gridcolumn',
                                 header: '禁用',
                                 sortable: true,
-                                width: 50,
+                                width: 40,
+                                hidden: true,
                                 dataIndex: 'disabled',
                                 renderer:function(value){if('0'==value){return "否";}else{return "是";}}
+                            },
+                            {
+                                xtype: 'gridcolumn',
+                                header: '引用',
+                                sortable: true,
+                                width: 120,
+                                dataIndex: 'cite'
                             },
                             {
                                 xtype: 'gridcolumn',
@@ -279,8 +297,17 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                             		var isEmpty = record.get("empty");
                             		if(isEmpty)
                             			return '';
-                            		else
-	          		    	  			return '<a href="employee.do?cmd=search&department='+value+'&fileClass='+record.get('fileClass').id+'" target="_blank"><font color=blue>查看文档</font></a>';
+                            		else{
+                            			var cite = record.get('cite');
+                            			if(null==cite || ''==cite)
+                            				return '<a href="employee.do?cmd=search&department='+value+'&fileClass='+record.get('fileClass').id+'" target="_blank"><font color=blue>查看文档</font></a>';
+                            			else{
+                            				var department = cite.substr(0,cite.indexOf('.'));
+                            				var fileClass = cite.substr(cite.indexOf('.')+1,5);
+                            				return '<a href="employee.do?cmd=search&department='+department+'&fileClass='+fileClass+'" target="_blank"><font color=blue>查看文档</font></a>';
+                            			}
+                            		}
+	          		    	  			
 	          		      		},scope:this}
                             },
                             {
@@ -289,6 +316,7 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                                 sortable: true,
                                 width: 50,
                                 dataIndex: 'selected',
+                                hidden: true,
                                 renderer:function(value){
                             		if(null!=value&&undefined!=value.split("]")[3])
                                 		return value.split("]")[3].substring(1);
@@ -302,6 +330,7 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                                 sortable: false,
                                 width: 50,
                                 dataIndex: 'departmentCode',
+                                hidden: true,
                                 renderer:{fn:function(value,metadata,record){
                             		var isEmpty = record.get("empty");
                             		if(isEmpty)

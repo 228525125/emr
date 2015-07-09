@@ -23,7 +23,7 @@ import com.easyjf.container.annonation.POLoad;
 
 /**
  * 文件
- * @author Administrator
+ * @author chenxian
  *
  */
 @Entity
@@ -74,6 +74,8 @@ public class Employee {
 	private String version = "A";           //版本
 	
 	private String selected;          //选择的版本的文件名称
+	
+	private String cite;               //引用的文件编码         
 	
 	public Long getId() {
 		return id;
@@ -209,6 +211,14 @@ public class Employee {
 
 	public void setExtraEmpty(Boolean extraEmpty) {
 		this.extraEmpty = extraEmpty;
+	}
+
+	public String getCite() {
+		return cite;
+	}
+
+	public void setCite(String cite) {
+		this.cite = cite;
 	}
 	
 }

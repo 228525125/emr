@@ -2,6 +2,8 @@ package com.mhsoft.emr.mvc;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -167,6 +169,7 @@ public class EmployeeAction extends BaseAction {
 				bean.put("selected", emp.getSelected());
 				bean.put("version", emp.getVersion());
 				bean.put("extraEmpty", emp.getExtraEmpty());
+				bean.put("cite", emp.getCite());
 				res.add(bean);
 			}
 		}
@@ -278,7 +281,7 @@ public class EmployeeAction extends BaseAction {
 		}
 		
 		if(null!=form.get("fileClass")&&!"".equals(form.get("fileClass").toString())){
-			Long fileClass = Long.valueOf(form.get("fileClass").toString());
+			String fileClass = form.get("fileClass").toString();
 			form.addResult("fileClass", fileClass);
 		}
 	}
@@ -313,8 +316,13 @@ public class EmployeeAction extends BaseAction {
 			
 			//根据文件类型
 			if(null!=form.get("fileClass")&&!"".equals(form.get("fileClass").toString())){
-				Long fileClass = Long.valueOf(form.get("fileClass").toString());
-				qo.addQuery("fileClass.id = ?", new Object[]{fileClass});
+				String fileClass = form.get("fileClass").toString();
+				if(-1==fileClass.indexOf(".")){                  //是id的情况
+					Long fileClassId = Long.valueOf(form.get("fileClass").toString());
+					qo.addQuery("fileClass.id = ?", new Object[]{fileClassId});
+				}else{                                           //是code的情况
+					qo.addQuery("fileClass.code = ?", new Object[]{fileClass});
+				}
 			}
 			
 			qo.addQuery(" disabled = ?", new Object[]{false});
@@ -550,5 +558,25 @@ public class EmployeeAction extends BaseAction {
 		
 		form.addResult("files", files);
 		return page("extrafile");
+	}
+	
+	public static void main(String[] args) {
+		String s = "CSS测试";  
+        try {  
+            //css or js post/get data submmit  
+            s = URLEncoder.encode(s, "UTF-8");  
+            System.out.println("encode :"+s);  
+            //backstage java/jsp dispose  
+            s = URLDecoder.decode(s, "UTF-8");  
+            System.out.println("decode :"+s);  
+            s = new String(s.getBytes(),"GBK");  
+            System.out.println("GBK :" +s);  
+            //combine encoding change  
+        //  s = new String(URLDecoder.decode(s, "UTF-8").getBytes(),"GBK");  
+        } catch (UnsupportedEncodingException e) {  
+            System.out.println("encoding cause,change failure");  
+        }catch (Exception e) {  
+            System.out.println("others cause,change failure");  
+        }  
 	}
 }

@@ -163,7 +163,7 @@
 				    xtype: 'spacer',
 				    width: 6
 				},this.fileClassField,
-				'-','物料代码:',{
+				'-','代码\图号\任务单:',{
 				    xtype: 'spacer',
 				    width: 6
 				},this.departmentField,

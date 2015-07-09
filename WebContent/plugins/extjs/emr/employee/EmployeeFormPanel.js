@@ -1,6 +1,6 @@
 EmployeeFormPanel = Ext.extend(Ext.form.FormPanel, {
     width: 343,
-    height: 285,
+    height: 305,
     padding: 10,
     labelWidth: 70,
     labelAlign: 'right',
@@ -108,9 +108,14 @@ EmployeeFormPanel = Ext.extend(Ext.form.FormPanel, {
                 buttonCfg: {
                     iconCls: 'uploadIcon'
                 }
+            },{
+                xtype: 'textfield',
+                fieldLabel: '引用文件',
+                allowBlank: true,
+                anchor: '90%',
+                name: 'cite'
             }
         ];
         EmployeeFormPanel.superclass.initComponent.call(this);
-
     }
 });

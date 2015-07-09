@@ -30,7 +30,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>easyjf</servlet-name>
-		<url-pattern>*.do</url-pattern><!--所有.ejf的扩展名都由easyjweb来处理-->
+		<url-pattern>*.do</url-pattern><!--所有.do的扩展名都由easyjweb来处理-->
 	</servlet-mapping>		 
 	
 	<!-- 定义字符处理Filter -->

@@ -79,17 +79,25 @@ public class UploadAction extends BaseAction {
 			
 			form.toPo(object, true);
 			if (!hasErrors()){
+				Boolean empty = object.getEmpty();   //是否引用或上传文档
+				
 				if(!form.getFileElement().keySet().isEmpty()){
 					String selected = saveFile(form, fileSavePath+object.getCode()+"/"+object.getFileClass().getCode(),object.getCode(), getUser().getAccount(), object.getVersion());
 					if(!"".equals(selected)){       //表示没有上传文件，只是修改了字段
 						object.setSelected(selected);
-						object.setEmpty(false);
+						empty = false;
 					}
 				}
 				
 				if(!"".equals(saveExtraFile(form, fileSavePath+object.getCode()+"/"+object.getFileClass().getCode()+"/"+ExtraPath, getUser().getAccount()))){
 					object.setExtraEmpty(false);
 				}
+				
+				if(null!=object.getCite() && !"".equals(object.getCite())){
+					empty = false;
+				}
+				
+				object.setEmpty(empty);
 				
 				service.updateEmployee(id, object);
 				log += "[FileCode:"+object.getCode()+"]";
@@ -100,17 +108,24 @@ public class UploadAction extends BaseAction {
 			Organization organization = department.getOrganization();
 			object = form.toPo(Employee.class);
 			if (!hasErrors()){
+				Boolean empty = object.getEmpty();   //是否引用或上传文档
+				
 				if(!form.getFileElement().keySet().isEmpty()){
 					String selected = saveFile(form, fileSavePath+object.getCode()+"/"+object.getFileClass().getCode(),object.getCode(), getUser().getAccount(), object.getVersion());
 					if(!"".equals(selected)){       //表示没有上传文件，只是修改了字段
 						object.setSelected(selected);
-						object.setEmpty(false);
+						empty = false;
 					}
 					
 					if(!"".equals(saveExtraFile(form, fileSavePath+object.getCode()+"/"+object.getFileClass().getCode()+"/"+ExtraPath, getUser().getAccount()))){
 						object.setExtraEmpty(false);
 					}
 				}
+				
+				if(null!=object.getCite() && !"".equals(object.getCite())){
+					empty = false;
+				}
+				
 				String code = "";
 				if(null!=department.getTuhao())
 					code = department.getTuhao();
@@ -124,8 +139,6 @@ public class UploadAction extends BaseAction {
 				
 				log += "[FileCode:"+object.getCode()+"]";
 			}
-			
-			
 		}
 		
 		String IP = ActionContext.getContext().getRequest().getRemoteAddr();
