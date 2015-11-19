@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -170,6 +171,12 @@ public class EmployeeAction extends BaseAction {
 				bean.put("version", emp.getVersion());
 				bean.put("extraEmpty", emp.getExtraEmpty());
 				bean.put("cite", emp.getCite());
+				
+				if(null!=emp.getDate()){
+					SimpleDateFormat sFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					bean.put("date", sFormat.format(emp.getDate()));
+				}
+				
 				res.add(bean);
 			}
 		}
@@ -392,7 +399,7 @@ public class EmployeeAction extends BaseAction {
 				
 				for(Object obj : fileClassList){
 					FileClass fileClass = (FileClass) obj;
-					if(null!=fileClass.getParent()&&!fcList.contains(fileClass)){
+					if(null!=fileClass.getParent()&&!fcList.contains(fileClass)&&!fileClass.getDisabled()){
 						Employee bean = new Employee();
 						String code = "";
 						if(null!=department.getTuhao())

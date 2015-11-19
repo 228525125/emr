@@ -59,7 +59,7 @@
 		});
 		
 		this.fileClassStore = new Ext.data.JsonStore({
-			url: 'fileClass.do?cmd=list',
+			url: 'fileClass.do?cmd=selectList',
 			root:"result",
 			fields:["id","name"],
 			listeners:{
@@ -67,7 +67,7 @@
 					this.fileClassField.setValue(this.fileClass);
 				},scope:this}
 			},
-			baseParams:{pageSize:50}
+			baseParams:{pageSize:100}
 		});
 		
 		this.fileClassField = new Ext.form.ComboBox({

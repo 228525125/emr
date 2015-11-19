@@ -92,7 +92,7 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
 		this.store = new Ext.data.JsonStore({
 			url: 'employee.do?cmd=list',
 			root:"result",
-			fields:["id","code","name","fileClass","auxCode","disabled","description","address","department","departmentCode","departmentId","empty","selected","version","extraEmpty","cite"],
+			fields:["id","code","name","fileClass","auxCode","disabled","description","address","department","departmentCode","departmentId","empty","selected","version","extraEmpty","cite","date"],
 			listeners:{
 				'beforeload': {fn:function(storeThis,option){
 					storeThis.removeAll();
@@ -242,6 +242,23 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                                 sortable: true,
                                 width: 150,
                                 dataIndex: 'description'
+                            },
+                            {
+                                xtype: 'gridcolumn',
+                                header: '更新时间',
+                                sortable: true,
+                                width: 80,
+                                dataIndex: 'date',
+                                renderer:{fn:function(value,metadata,record){
+                                	if(null!=value&&''!=value){
+                                		var d1 = new Date(Date.parse(value.replace(/-/g, "/"))).getTime();
+                                		var cur = new Date().getTime();
+                                		if(d1>cur-1000*60*60*24*3)
+                                			return "<font color=red>"+value+"</font>"
+                                	}
+                                	
+	          		    	  		return value;
+	          		      		},scope:this}
                             },
                             {
                                 xtype: 'gridcolumn',

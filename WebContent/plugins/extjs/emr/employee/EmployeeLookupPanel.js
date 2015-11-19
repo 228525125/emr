@@ -93,7 +93,7 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
 		this.store = new Ext.data.JsonStore({
 			url: 'employee.do?cmd=list',
 			root:"result",
-			fields:["id","code","name","fileClass","auxCode","disabled","description","address","department","departmentCode","empty","selected","version","extraEmpty"],
+			fields:["id","code","name","fileClass","auxCode","disabled","description","address","department","departmentCode","empty","selected","version","extraEmpty","date"],
 			listeners:{
 				'beforeload': {fn:function(storeThis,option){
 					storeThis.removeAll();
@@ -246,15 +246,32 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                                 xtype: 'gridcolumn',
                                 header: '名称',
                                 sortable: true,
-                                width: 80,
+                                width: 180,
                                 dataIndex: 'name'
                             },
                             {
                                 xtype: 'gridcolumn',
-                                header: '名称',
+                                header: '描述',
+                                sortable: true,
+                                width: 180,
+                                dataIndex: 'description'
+                            },
+                            {
+                                xtype: 'gridcolumn',
+                                header: '更新时间',
                                 sortable: true,
                                 width: 80,
-                                dataIndex: 'description'
+                                dataIndex: 'date',
+                                renderer:{fn:function(value,metadata,record){
+                                	if(null!=value&&''!=value){
+                                		var d1 = new Date(Date.parse(value.replace(/-/g, "/"))).getTime();
+                                		var cur = new Date().getTime();
+                                		if(d1>cur-1000*60*60*24*3)
+                                			return "<font color=red>"+value+"</font>"
+                                	}
+                                	
+	          		    	  		return value;
+	          		      		},scope:this}
                             },
                             {
                                 xtype: 'gridcolumn',
@@ -287,6 +304,7 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                                 header: '禁用',
                                 sortable: true,
                                 width: 50,
+                                hidden : true,
                                 dataIndex: 'disabled',
                                 renderer:function(value){if('0'==value){return "否";}else{return "是";}}
                             },
@@ -309,6 +327,7 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                                 header: '上传编号',
                                 sortable: true,
                                 width: 50,
+                                hidden : true,
                                 dataIndex: 'selected',
                                 renderer:function(value){
                             		if(null!=value&&undefined!=value.split("]")[3])
@@ -317,7 +336,7 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                             			return '';
                             	}
                             },
-                            {
+                            /*{
                                 xtype: 'gridcolumn',
                                 header: '版本',
                                 sortable: false,
@@ -330,7 +349,7 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                             		else
 	          		    	  			return '<a href="employee.do?cmd=history&department='+value+'&fileClass='+record.get('fileClass').id+'" target="_blank"><font color=blue>历史版本</font></a>';
 	          		      		},scope:this}
-                            },
+                            },*/
                             {
                                 xtype: 'gridcolumn',
                                 header: '附件',

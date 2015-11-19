@@ -15,7 +15,9 @@
 		<tr>
 			<td>$file.name</td>
 			<td><a href="$file.download">下载</a></td>
+			#if($user) 
 			<td><a href="employee.do?cmd=deletefile&path=$file.path&name=$file.name">删除</a>
+			#end
 		</tr>
 		#end
 	</table>

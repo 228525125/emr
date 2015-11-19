@@ -44,6 +44,7 @@ public class FileClassAction extends BaseAction {
 	public Page doSelectList(WebForm form) {
 		QueryObject qo = form.toPo(QueryObject.class);
 		qo.addQuery("parent is not null", null);
+		qo.addQuery("disabled=false", null);
 		IPageList pageList = service.getFileClassBy(qo);
 		form.jsonResult(pageList);
 		return Page.JSONPage;

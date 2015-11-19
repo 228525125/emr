@@ -48,6 +48,7 @@ public class BaseAction extends AbstractPageCmdAction {
 		String contextPath = ActionContext.getContext().getRequest().getContextPath();
 		form.addResult("ContextPath", contextPath);
 		form.addResult("realPath", host+":"+port+contextPath);
+		form.addResult("user", user);
 		return super.doAfter(form, module);
 	}
 	

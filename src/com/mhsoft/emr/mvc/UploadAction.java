@@ -86,6 +86,8 @@ public class UploadAction extends BaseAction {
 					if(!"".equals(selected)){       //表示没有上传文件，只是修改了字段
 						object.setSelected(selected);
 						empty = false;
+						//只有上传文件才更新时间
+						object.setDate(new Date(System.currentTimeMillis()));
 					}
 				}
 				
@@ -112,9 +114,12 @@ public class UploadAction extends BaseAction {
 				
 				if(!form.getFileElement().keySet().isEmpty()){
 					String selected = saveFile(form, fileSavePath+object.getCode()+"/"+object.getFileClass().getCode(),object.getCode(), getUser().getAccount(), object.getVersion());
-					if(!"".equals(selected)){       //表示没有上传文件，只是修改了字段
+					if(!"".equals(selected)){       //表示上传文件
 						object.setSelected(selected);
 						empty = false;
+						
+						//只有上传文件才更新时间
+						object.setDate(new Date(System.currentTimeMillis()));
 					}
 					
 					if(!"".equals(saveExtraFile(form, fileSavePath+object.getCode()+"/"+object.getFileClass().getCode()+"/"+ExtraPath, getUser().getAccount()))){
@@ -131,7 +136,8 @@ public class UploadAction extends BaseAction {
 					code = department.getTuhao();
 				else
 					code = department.getCode();
-				object.setCode(code+"."+object.getFileClass().getCode()+"."+maxidService.createMaxId(6));
+				object.setCode(code+"."+object.getFileClass().getCode()+"."+maxidService.createMaxId(6));				
+				
 				department.getEmployeeList().add(object);
 				organization.getEmployeeList().add(object);
 				departmentService.updateDepartment(did, department);
