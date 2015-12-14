@@ -93,7 +93,7 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
 		this.store = new Ext.data.JsonStore({
 			url: 'employee.do?cmd=list',
 			root:"result",
-			fields:["id","code","name","fileClass","auxCode","disabled","description","address","department","departmentCode","empty","selected","version","extraEmpty","date"],
+			fields:["id","code","name","fileClass","auxCode","disabled","description","address","department","departmentCode","empty","selected","version","extraEmpty","cite","date"],
 			listeners:{
 				'beforeload': {fn:function(storeThis,option){
 					storeThis.removeAll();
@@ -101,7 +101,7 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
 					storeThis.baseParams.departmentId = this.departmentId;					
 				},scope:this}
 			},
-			baseParams:{pageSize:2000}
+			baseParams:{pageSize:2000,disabled:'false'}
 		});
 		
 		this.departmentStore = new Ext.data.JsonStore({
@@ -310,6 +310,13 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                             },
                             {
                                 xtype: 'gridcolumn',
+                                header: '引用',
+                                sortable: true,
+                                width: 120,
+                                dataIndex: 'cite'
+                            },
+                            {
+                                xtype: 'gridcolumn',
                                 header: '文档',
                                 sortable: false,
                                 width: 50,
@@ -318,8 +325,26 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                             		var isEmpty = record.get("empty");
                             		if(isEmpty)
                             			return '';
-                            		else
-	          		    	  			return '<a href="employee.do?cmd=search&department='+value+'&fileClass='+record.get('fileClass').id+'" target="_blank"><font color=blue>查看文档</font></a>';
+                            		else{
+                            			var cite = record.get('cite');
+                            			if(null==cite || ''==cite)
+                            				return '<a href="employee.do?cmd=search&department='+value+'&fileClass='+record.get('fileClass').id+'" target="_blank"><font color=blue>查看文档</font></a>';
+                            			else{
+                            				var department = '';
+                            				if('09'==cite.substr(0,cite.indexOf('.'))){
+                            					var i = cite.indexOf('.')+1;       // '09.'
+                            					department = cite.substr(0,i);
+                            					var temp = cite.substr(i,cite.length);
+                            					department += temp.substr(0,temp.indexOf('.'));
+                            				}else{
+                            					department = cite.substr(0,cite.indexOf('.'));
+                            				}
+                            				var index = cite.lastIndexOf('.');
+                            				var fileClass = cite.substr(index-5,5);
+                            				return '<a href="employee.do?cmd=search&department='+department+'&fileClass='+fileClass+'" target="_blank"><font color=blue>查看文档</font></a>';
+                            			}
+                            		}
+	          		    	  			
 	          		      		},scope:this}
                             },
                             {

@@ -261,7 +261,7 @@ public class UploadAction extends BaseAction {
 			    	
 			    	
 					String log = curTime;
-					log += "[UploadFile]";
+					log += "[UploadExtraFile]";
 					log += "[FileName:"+item.getName()+"]";
 					log += "[User:"+user+"]";
 			    	

@@ -140,7 +140,11 @@ public class EmployeeAction extends BaseAction {
 			qo.addQuery("fileClass.id=?", new Object[]{id});
 		}
 		
-		qo.addQuery("disabled=false", null);
+		if(null!=form.get("disabled")&&!"".equals(form.get("disabled").toString())){
+			Boolean disabled = new Boolean(form.get("disabled").toString());
+			qo.addQuery("disabled=?", new Object[]{disabled});
+		}
+		
 		
 		pageList = service.getEmployeeBy(qo);
 		Map<String,Object> result = new HashMap<String,Object>();
@@ -530,13 +534,13 @@ public class EmployeeAction extends BaseAction {
 		
 		if(null!=form.get("path")&&!"".equals(form.get("path").toString())){
 			String path = form.get("path").toString();
-			String name = null;
-			try {
+			String name = form.get("name").toString();
+			/*try {
 				name = new String(form.get("name").toString().getBytes("iso-8859-1"),"UTF-8");
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 			
 			File file = new File(fileSavePath+path);
 			boolean extraEmpty = true;

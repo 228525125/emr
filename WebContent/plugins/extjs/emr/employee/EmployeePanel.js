@@ -128,6 +128,33 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
             scope: this
         });
 		
+		this.state = new Ext.form.ComboBox({	        
+	        hiddenName:'style',
+	        valueField:'id',
+	        displayField:'mc',
+	        value:'false',
+	        width:60,
+	        allowBlank:false,
+	        mode:'local',
+	     	triggerAction:'all',
+	        forceSelection:true,
+	        editable:false,
+	        store:new Ext.data.Store({     
+	            data:[['false','正常'],['true','禁用']], 
+	            autoLoad: true,
+	            reader:new Ext.data.ArrayReader({}, [
+	                  {name: 'id'},
+	                  {name: 'mc'} 
+				])
+	        }),
+	        listeners:{
+        		'change':{fn:function(t,valuenew,valueold){
+					this.store.baseParams['disabled']=valuenew;
+        		},scope:this}
+        	}
+	    });
+	    this.store.baseParams['disabled']=this.state.getValue();
+		
 		this.root = new Ext.tree.AsyncTreeNode({
 			text: '组织架构',
             id: '0',                      //分别表示机构编号、部门编号   	
@@ -319,8 +346,17 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                             			if(null==cite || ''==cite)
                             				return '<a href="employee.do?cmd=search&department='+value+'&fileClass='+record.get('fileClass').id+'" target="_blank"><font color=blue>查看文档</font></a>';
                             			else{
-                            				var department = cite.substr(0,cite.indexOf('.'));
-                            				var fileClass = cite.substr(cite.indexOf('.')+1,5);
+                            				var department = '';
+                            				if('09'==cite.substr(0,cite.indexOf('.'))){
+                            					var i = cite.indexOf('.')+1;       // '09.'
+                            					department = cite.substr(0,i);
+                            					var temp = cite.substr(i,cite.length);
+                            					department += temp.substr(0,temp.indexOf('.'));
+                            				}else{
+                            					department = cite.substr(0,cite.indexOf('.'));
+                            				}
+                            				var index = cite.lastIndexOf('.');
+                            				var fileClass = cite.substr(index-5,5);
                             				return '<a href="employee.do?cmd=search&department='+department+'&fileClass='+fileClass+'" target="_blank"><font color=blue>查看文档</font></a>';
                             			}
                             		}
@@ -383,7 +419,12 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
 	                                xtype: 'spacer',
 	                                width: 6
                             	},
-                                {
+                            	this.state,
+                            	{
+	                                xtype: 'spacer',
+	                                width: 6
+                            	},
+                            	{
                                     xtype: 'button',
                                     text: '添加',
                                     pressed: true,           
@@ -409,6 +450,10 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                                     xtype: 'button',
                                     text: '删除'
                                 },*/
+                                {
+                                    xtype: 'spacer',
+                                    width: 3
+                                },
                                 {
                                     xtype: 'button',
                                     text: '刷新',
