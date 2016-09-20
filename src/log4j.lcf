@@ -3,7 +3,7 @@ log4j.rootLogger=WARN,file
 log4j.logger.com.mhsoft=,file
 #每天产生一个日志文件
 log4j.appender.file=org.apache.log4j.DailyRollingFileAppender
-log4j.appender.file.File=E:/log.html
+log4j.appender.file.File=F:/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/emr/WEB-INF/views/employee/log.html
 log4j.appender.file.DatePattern='.'yyyy-MM-dd
 log4j.appender.file.layout=org.apache.log4j.HTMLLayout
 log4j.appender.file.layout.LocationInfo=true

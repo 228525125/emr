@@ -8,12 +8,12 @@
 	<context-param>
 		<param-name>uploadPath</param-name>
 		<!-- <param-value>D:/apache-tomcat-6.0.32/webapps/emr/file-backups/</param-value>  -->
-		<param-value>F:/CX/项目/MyEclipse/workspace101/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/emr/file-backups/</param-value>
+		<param-value>F:/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/emr/file-backups/</param-value>
 	</context-param>
 	
 	<context-param>
 		<param-name>queryForFileType</param-name>
-		<param-value>.pdf,.xls,.xlsx,.doc,.docx</param-value>
+		<param-value>.pdf,.xls,.xlsx,.doc,.docx,.txt</param-value>
 		<!-- <param-value>.jpg,.png</param-value>  -->
 	</context-param>
 	
