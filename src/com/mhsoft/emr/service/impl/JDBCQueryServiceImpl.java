@@ -17,6 +17,7 @@ import com.easyjf.web.tools.IPageList;
 import com.mhsoft.ext.web.tools.DefaultOrderBy;
 import com.mhsoft.ext.web.tools.QueryOrderBy;
 import com.mhsoft.emr.dao.JDBCQueryDao;
+import com.mhsoft.emr.domain.Department;
 import com.mhsoft.emr.service.JDBCQueryService;
 import com.mhsoft.emr.util.QueryUtil;
 
@@ -89,5 +90,42 @@ public class JDBCQueryServiceImpl implements JDBCQueryService {
 			return ret.toString();
 		else
 			return null;
+	}
+	
+	@Override
+	public String icbomTree(Integer did) {
+		// TODO Auto-generated method stub
+		String result = "[";
+		String sql = "select f.id,b.FItemID,d.FNumber,d.FName,d.FModel,d.FHelpCode " +
+				 " from AIS20091218114908.dbo.ICBOM a " + 
+				 " left join AIS20091218114908.dbo.ICBOMCHILD b on a.FInterID=b.FInterID " +
+				 " left join AIS20091218114908.dbo.t_ICItem c on a.FItemID=c.FItemID " +
+				 " left join AIS20091218114908.dbo.t_ICItem d on b.FItemID=d.FItemID " +
+				 " left join Department e on c.FNumber=e.Code " +
+				 " left join Department f on d.FNumber=f.Code " + 
+				 " where 1=1 " +
+				 " and e.id = "+did+" " +
+				 " order by c.FNumber ";
+		
+		List list = query(sql);
+		
+		for(int i=0;i<list.size();i++){
+			Map bean = (Map) list.get(i);
+			String id = "'"+bean.get("id").toString()+"'";
+			result += "{id:"+id+",text:'"+"("+bean.get("FNumber")+")"+bean.get("FName")+"',";
+			if(icbomTree_isLeaf(Integer.valueOf(bean.get("FItemID").toString())))
+				result += "leaf:true}";
+			else
+				result += "leaf:false}";
+			if(i<list.size()-1)
+				result += ",";
+		}
+		return result+"]";
+	}
+	
+	private boolean icbomTree_isLeaf(Integer itemID){
+		String sql = "select 1 from AIS20091218114908.dbo.ICBOM where FItemID ="+itemID;
+		List list = query(sql);
+		return list.isEmpty();
 	}
 }

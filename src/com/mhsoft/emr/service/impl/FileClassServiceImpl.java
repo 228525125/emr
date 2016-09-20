@@ -101,5 +101,16 @@ private IFileClassDAO fileClassDao;
 		else
 			fileClass.setLevel(fileClass.getCode());
 	}
+	
+	@Override
+	public FileClass getFileClas(String code) {
+		// TODO Auto-generated method stub
+		String sql = "select f from FileClass f where f.code='"+code+"'";
+		List list = fileClassDao.query(sql, null, 0, 1);
+		if(list.isEmpty())
+			return null;
+		else
+			return (FileClass) list.get(0);
+	}
 
 }

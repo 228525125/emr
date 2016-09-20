@@ -1,95 +1,20 @@
-EmployeePanel = Ext.extend(Ext.Viewport, {
+IcbomPanel = Ext.extend(Ext.Viewport, {
     layout: 'border',
-    id: 'employeepanel',
-    createForm:function(){
-		if(!this.fp||null==this.fp){
-			this.fp = new EmployeeFormPanel({
-				fileClassStore : this.fileClassStore
-			});
-			if(0!=this.departmentId){
-				this.fp.form.findField("departmentName").setValue(this.departmentName);
-				this.fp.form.findField("department").setValue(this.departmentId);
-			}
-		}
-		if(!this.win||null==this.win){
-			this.win = new Ext.Window({
-				width:360,
-				height:400,
-				layout:'fit',
-				buttonAlign:"center",
-				title:'编辑文件信息',
-				modal:true,
-				shadow:true,
-				closeAction:"close",
-				items:[this.fp],
-				buttons:[{text:"保存",
-						  handler:function(){
-							this.fp.form.submit({
-									waitMsg:'正在保存。。。',
-						            url:'upload.do',
-						            method:'POST',
-						            success:function(form,action){
-										if(null!=action.result&&action.result.msg)
-							        		Ext.Msg.alert('提示',action.result.msg,function(){
-							        			this.win.close();
-									           	this.store.reload(); 
-							        		},this);
-										else{
-								           	this.win.close();
-								           	this.store.reload();
-										}
-						            },
-						            scope:this
-							});	
-						  },
-						  scope:this},
-						  {text:"清空",
-						   handler:function(){
-							  this.fp.form.reset();
-						   },
-						   scope:this},
-						  {text:"取消",
-						   handler:function(){
-							  this.win.close();  
-						   },
-						   scope:this}
-						 ]					  
-			});
-			this.win.on('close',function(){this.fp=null;this.win=null;},this);
-		}
-	},
-	add_employee:function(){		
-		if(this.departmentId==0||this.departmentId==-1)
-			Ext.Msg.alert("提示","请先选择物料!");
-		else{
-			this.createForm();
-			this.win.show();
-		}
-	},
-	edit_employee:function(){
-		var record=this.gp.getSelectionModel().getSelected();
-		if(!record){
-			Ext.Msg.alert("提示","请先选择要编辑的行!");
-			return;
-		}
-			
-		this.createForm();
-		this.win.show();
-		this.fp.form.loadRecord(record);		
-		//============对combo类型的字段赋值==============//
-		
-		/* department不是对象，而是一个departmentName */ 
-		if(record.get("department")&&null!=record.get("department")){
-			this.fp.form.findField("departmentName").setValue(record.get("department"));
-		}
-			
-		if(record.get("departmentId")&&null!=record.get("departmentId")){
-			this.fp.form.findField("department").setValue(record.get("departmentId"));				
-		}
-		this.fp.form.findField("fileClass").setValue(record.get("fileClass").id);	
-	},
+    id: 'icbompanel',
     initComponent: function() {
-		this.store = new Ext.data.JsonStore({
+		/*this.store = new Ext.data.JsonStore({
+			url: 'department.do?cmd=icbomhild',
+			root:"result",
+			fields:["FNumber","FName","FModel","FHelpCode","FQty"],
+			listeners:{
+				'beforeload': function(storeThis,option){
+					storeThis.removeAll();
+				}
+			},
+			baseParams:{pageSize:2000}
+		});*/
+    	
+    	this.store = new Ext.data.JsonStore({
 			url: 'employee.do?cmd=list',
 			root:"result",
 			fields:["id","code","name","fileClass","auxCode","disabled","description","address","department","departmentCode","departmentId","empty","selected","version","extraEmpty","cite","date","checked","checkDate","checker","departmentModel"],
@@ -102,23 +27,17 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
 			},
 			baseParams:{pageSize:2000}
 		});
+    	
+    	this.store.baseParams['disabled']='false';
+		
+		this.organizationId = 1;
+		this.departmentId = 0;
 		
 		this.departmentStore = new Ext.data.JsonStore({
 			url: 'department.do?cmd=list',
 			root:"result",
 			fields:["id","tuhao","name","code"],
 			baseParams:{notNullField:'tuhao',pageSize:200}
-		});
-		
-		this.departmentName='';
-		this.departmentId = 0;		
-		this.organizationId = 1;
-		
-		this.fileClassStore = new Ext.data.JsonStore({
-			url: 'fileClass.do?cmd=selectList',
-			root:"result",
-			fields:["id","name"],
-			baseParams:{pageSize:100}
 		});
 		
 		this.queryfield = new Ext.app.SearchField({
@@ -128,36 +47,9 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
             scope: this
         });
 		
-		this.state = new Ext.form.ComboBox({	        
-	        hiddenName:'style',
-	        valueField:'id',
-	        displayField:'mc',
-	        value:'false',
-	        width:60,
-	        allowBlank:false,
-	        mode:'local',
-	     	triggerAction:'all',
-	        forceSelection:true,
-	        editable:false,
-	        store:new Ext.data.Store({     
-	            data:[['false','正常'],['true','禁用']], 
-	            autoLoad: true,
-	            reader:new Ext.data.ArrayReader({}, [
-	                  {name: 'id'},
-	                  {name: 'mc'} 
-				])
-	        }),
-	        listeners:{
-        		'change':{fn:function(t,valuenew,valueold){
-					this.store.baseParams['disabled']=valuenew;
-        		},scope:this}
-        	}
-	    });
-	    this.store.baseParams['disabled']=this.state.getValue();
-		
 		this.root = new Ext.tree.AsyncTreeNode({
-			text: '组织架构',
-            id: '0',                      //分别表示机构编号、部门编号   	
+			text: '物料',
+            id: '0,0',                      //分别表示机构编号、部门编号   	
 			expanded:true
 		});
 		
@@ -178,7 +70,7 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                 autoScroll:true,
                 items: [
 					{
-					    xtype: 'combo',
+						xtype: 'combo',
 					    width: 200,
 					    name: 'departmentselect',
 					    valueField: 'id',
@@ -188,40 +80,35 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
 					    store: this.departmentStore,
 					    triggerAction: 'all',
 					    listeners: {
-							'select':{fn:function(combo,newValue,oldValue){														
+							'select':{fn:function(combo,newValue,oldValue){
 								this.departmentId = newValue.data.id;
-								this.tree.getRootNode().id = this.organizationId+','+this.departmentId;  //重置组织架构tree重置
-								this.tree.getRootNode().setText("("+newValue.data.code+")"+newValue.data.name);
+								this.tree.getRootNode().id = this.departmentId;
+								this.tree.getRootNode().setText(newValue.data.name);
+								this.store.load();
 								this.tree.getLoader().load(this.tree.getRootNode());
-								this.store.load();								  //加载新的机构职员
 							},scope:this}
 						}
-					},				
+					},
                     {
                         xtype: 'treepanel',
-                        id: 'departmenttreepanel',	
+                        id: 'icbomtreepanel',	
                         border: false,
                         root: {
                             text: '物料',
-                            id: '1,0'                      //分别表示机构编号、部门编号
+                            id: '0'                      //分别表示机构编号、部门编号
                         },
-                        loader: {                        
-                            url: 'department.do?cmd=tree',                            
+                        loader: {
+                            url: 'department.do?cmd=icbomtree',                            
                             listeners: {
-                        		'beforeload':{fn:function(loader,node){                       
-	    							loader.baseParams.organizationId=node.id.split(",")[0];
-	    							loader.baseParams.departmentId=node.id.split(",")[1];	    							
-	    						},scope:this}
+                        		'beforeload':function(loader,node){
+	    							loader.baseParams.departmentId=node.id;
+	    						}
                         	}
                         },
                         listeners: {                        	
                         	'click':{fn:function(node,e){
-	                			this.organizationId = node.id.split(",")[0];
-	                			this.departmentId = node.id.split(",")[1];	                			
-	                			this.departmentName = node.text;
-	                			this.queryfield.onTrigger1Click();
-	                			if(0!=this.departmentId)                     //避免用户点击根节点，因为根节点为机构，node.id为*,0，这样就会过滤掉所有职员信息
-	                				this.store.load();                       //刷新右边的内容
+	                			this.departmentId = node.id;	                			
+	                			this.store.load();   //刷新右边的内容
 	                		},scope:this}
                         }
                     }
@@ -234,19 +121,16 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                 layout: 'fit',
                 items: [
                     {
-                        xtype: 'editorgrid',
-                        clicksToEdit:1,
-                        sm: this.sm,
+                        xtype: 'grid',
                         border: false,
                         loadMask: true,
                         trackMouseOver: false,
                         animCollapse: false,
                         store: this.store,
-                        sm: this.sm,
                         viewConfig: {
                             forceFit: true
-                        },                        
-                        id: 'employeegrid',
+                        },
+                        id: 'icbomgrid',
                         columns: [
                             this.sm,
                             {
@@ -277,7 +161,7 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                                 xtype: 'gridcolumn',
                                 header: '名称',
                                 sortable: true,
-                                hidden: false,
+                                hidden: true,
                                 width: 100,
                                 dataIndex: 'name'
                             },
@@ -471,172 +355,17 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                         tbar: {
                             xtype: 'toolbar',
                             items: [{
-	                                xtype: 'spacer',
-	                                width: 6
+                                xtype: 'spacer',
+                                width: 6
                             	},
-                            	this.state,
-                            	{
-	                                xtype: 'spacer',
-	                                width: 6
-                            	},
-                            	{
-                                    xtype: 'button',
-                                    text: '添加',
-                                    pressed: true,           
-                                    handler: this.add_employee,
-                                    scope:this
-                                },
-                                {
-                                    xtype: 'spacer',
-                                    width: 3
-                                },
-                                {
-                                    xtype: 'button',
-                                    text: '修改',
-                                    pressed: true,           
-                                    handler: this.edit_employee,
-                                    scope:this
-                                },
-                                {
-                                    xtype: 'spacer',
-                                    width: 3
-                                },
-                                /*{
-                                    xtype: 'button',
-                                    text: '删除'
-                                },*/
-                                {
-                                    xtype: 'spacer',
-                                    width: 3
-                                },
                                 {
                                     xtype: 'button',
                                     text: '刷新',
                                     pressed: true,           
                                     handler: function(){this.store.reload();},
                                     scope:this
-                                },
-                                {
-                                    xtype: 'spacer',
-                                    width: 3
-                                },
-                                {
-                                    xtype: 'button',
-                                    text: '批量添加',
-                                    pressed: true,           
-                                    handler: function(){                                		
-                                		post({
-                                			url: 'employee.do?cmd=batchAddFile',
-                                			params: {departmentId:this.departmentId},
-                                			loadmask:true,
-                                			compId: 'employeegrid',
-                                			waitText:'正在处理.....',
-                                			store: this.store
-                                		});
-                                	
-                                		//this.store.reload();
-                                	},
-                                    scope:this
-                                },'-',{
-                	            	text: '审核',
-                	            	pressed: true,
-                	            	handler: function(){
-                	            		var jsonBegin = '{"rows":[';
-                				    	var jsonEnd = ']}';
-                	            		
-                	            		var records = this.sm.getSelections();
-                	            		if(0==records.length){
-                				    		Ext.Msg.alert('提示','请选择申请单！');
-                				    		return;
-                				    	}
-                	            		for(var i=0;i<records.length;i++){
-                				    		var record = records[i];
-                				    		var id = record.get("id");                				    				
-                				    		jsonBegin += '{"id":"'+id+'"}';
-                				    		if(i<(records.length-1))
-                				    			jsonBegin += ',';
-                				    	}
-                	            		jsonBegin+=jsonEnd;
-                	            		
-                	            		var mask = new Ext.LoadMask('employeegrid', {
-                				    		msg : '正在处理。。。'
-                				    	});
-                				    	mask.show();
-                				    	
-                				    	Ext.Ajax.request({
-                				    		url:'employee.do?cmd=check',
-                				    		params:{resp:jsonBegin},
-                				    		method:'POST',
-                				    		success:function(response, options){
-                				    			if(mask)
-                				    				 mask.hide();
-                				    			var responseArray = Ext.util.JSON.decode(response.responseText); 
-                				    			var resp = responseArray.result[0];
-                				    			 if(resp.success==true){
-                				    				 if(resp.msg)
-                				    					 Ext.Msg.alert('提示','处理完毕!',function(){
-                				    						 this.store.load();
-                				    					 },this);
-                				    			 }else{
-                				    				 Ext.Msg.alert('提示','服务器没有响应，请稍后再试！');
-                				    			 }
-                				    		},
-                				    		scope:this
-                				    	});
-                	            	},
-                	            	scope: this
-                	            },{
-                                    xtype: 'spacer',
-                                    width: 3
-                                },{
-                	            	text: '反审核',
-                	            	pressed: true,
-                	            	handler: function(){
-                	            		var jsonBegin = '{"rows":[';
-                				    	var jsonEnd = ']}';
-                	            		
-                	            		var records = this.sm.getSelections();
-                	            		if(0==records.length){
-                				    		Ext.Msg.alert('提示','请选择申请单！');
-                				    		return;
-                				    	}
-                	            		for(var i=0;i<records.length;i++){
-                				    		var record = records[i];
-                				    		var id = record.get("id");                				    				
-                				    		jsonBegin += '{"id":"'+id+'"}';
-                				    		if(i<(records.length-1))
-                				    			jsonBegin += ',';
-                				    	}
-                	            		jsonBegin+=jsonEnd;
-                	            		
-                	            		var mask = new Ext.LoadMask('employeegrid', {
-                				    		msg : '正在处理。。。'
-                				    	});
-                				    	mask.show();
-                				    	
-                				    	Ext.Ajax.request({
-                				    		url:'employee.do?cmd=uncheck',
-                				    		params:{resp:jsonBegin},
-                				    		method:'POST',
-                				    		success:function(response, options){
-                				    			if(mask)
-                				    				 mask.hide();
-                				    			var responseArray = Ext.util.JSON.decode(response.responseText); 
-                				    			var resp = responseArray.result[0];
-                				    			 if(resp.success==true){
-                				    				 if(resp.msg)
-                				    					 Ext.Msg.alert('提示','处理完毕!',function(){
-                				    						 this.store.load();
-                				    					 },this);
-                				    			 }else{
-                				    				 Ext.Msg.alert('提示','服务器没有响应，请稍后再试！');
-                				    			 }
-                				    		},
-                				    		scope:this
-                				    	});
-                	            	},
-                	            	scope: this
-                	            },'->','查找: ', ' ',
+                                }
+                                ,'->','查找: ', ' ',
                		         	this.queryfield
                             ]
                         },
@@ -652,15 +381,12 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                 ]
             }
         ];
-        EmployeePanel.superclass.initComponent.call(this);
+        IcbomPanel.superclass.initComponent.call(this);
         
         this.on('render',function(t){        	
-        	this.gp = Ext.getCmp('employeegrid');
-        	this.tree = Ext.getCmp('departmenttreepanel');	
-        	this.departmentCombo = Ext.getCmp('departmentselect');        	
-			this.store.load();			
-			//this.departmentStore.load();
-			this.fileClassStore.load();
+        	this.gp = Ext.getCmp('icbomgrid');
+        	this.tree = Ext.getCmp('icbomtreepanel');	
+			this.store.load();
 		},this);
     }
 });

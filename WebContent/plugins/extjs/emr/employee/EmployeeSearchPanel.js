@@ -103,7 +103,7 @@
             handler: function(){
 				this.panel.load({
 	            	url: "employee.do?cmd=searchFile",
-	            	params: {department: this.department, role: this.role, fileClass: this.fileClass},
+	            	params: {department: this.department, role: this.role, fileClass: this.fileClass},   //为什么不加 serial: this.serial 这个条件，因为这个模式是为扫描枪准备的，因此也不会使用这个功能来查看通用文档 
 	            	text: "Loading...",
 	            	timeout: 30,
 	            	scripts: false,

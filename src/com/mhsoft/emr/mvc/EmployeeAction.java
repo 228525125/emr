@@ -6,6 +6,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +14,10 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.mhsoft.emr.domain.Department;
 import com.mhsoft.emr.domain.Employee;
@@ -113,17 +118,17 @@ public class EmployeeAction extends BaseAction {
 		//根据条件模糊查找部门		
 		if(null!=form.get("query")&&!"".equals(form.get("query").toString())){			
 			String query = form.get("query").toString();
-			qo.addQuery("(name like '%"+query+"%' or code like '%"+query+"%')", null);
+			qo.addQuery("(obj.name like '%"+query+"%' or obj.code like '%"+query+"%' or obj.department.model like '%"+query+"%' or obj.department.tuhao like '%"+query+"%')", null);
 		}else{
 			//根据部门查询职员列表
 			if(null!=form.get("departmentId")&&!"".equals(form.get("departmentId").toString())){
 				Long id = new Long(CommUtil.null2String(form.get("departmentId")));
 				if(0l==id)
-					qo.addQuery("department is null", null);
+					qo.addQuery("obj.department is null", null);
 				else if(AppContext.SELECT_ALL==id)
 					;
 				else{
-					qo.addQuery("department.id=?", new Object[]{id});
+					qo.addQuery("obj.department.id=?", new Object[]{id});
 				}
 			}
 			//根据机构查询职员列表
@@ -137,14 +142,18 @@ public class EmployeeAction extends BaseAction {
 		//根据文件类型
 		if(null!=form.get("fileClass")&&!"".equals(form.get("fileClass").toString())){
 			Long id = new Long(CommUtil.null2String(form.get("fileClass")));
-			qo.addQuery("fileClass.id=?", new Object[]{id});
+			qo.addQuery("obj.fileClass.id=?", new Object[]{id});
 		}
 		
 		if(null!=form.get("disabled")&&!"".equals(form.get("disabled").toString())){
 			Boolean disabled = new Boolean(form.get("disabled").toString());
-			qo.addQuery("disabled=?", new Object[]{disabled});
+			qo.addQuery("obj.disabled=?", new Object[]{disabled});
 		}
 		
+		if(null!=form.get("checked")&&!"".equals(form.get("checked").toString())){
+			Boolean checked = new Boolean(form.get("checked").toString());
+			qo.addQuery("obj.checked=?", new Object[]{checked});
+		}
 		
 		pageList = service.getEmployeeBy(qo);
 		Map<String,Object> result = new HashMap<String,Object>();
@@ -169,16 +178,24 @@ public class EmployeeAction extends BaseAction {
 				bean.put("address", emp.getAddress());
 				bean.put("department", emp.getDepartment().getName());
 				bean.put("departmentCode", emp.getDepartment().getCode());
+				bean.put("departmentModel", emp.getDepartment().getModel());
 				bean.put("departmentId", emp.getDepartment().getId());
 				bean.put("empty", emp.getEmpty());
 				bean.put("selected", emp.getSelected());
 				bean.put("version", emp.getVersion());
 				bean.put("extraEmpty", emp.getExtraEmpty());
 				bean.put("cite", emp.getCite());
+				bean.put("checked", emp.getChecked());
+				bean.put("checker", emp.getChecker());
 				
 				if(null!=emp.getDate()){
 					SimpleDateFormat sFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					bean.put("date", sFormat.format(emp.getDate()));
+				}
+				
+				if(null!=emp.getCheckDate()){
+					SimpleDateFormat sFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					bean.put("checkDate", sFormat.format(emp.getCheckDate()));
 				}
 				
 				res.add(bean);
@@ -239,8 +256,7 @@ public class EmployeeAction extends BaseAction {
 					department.getEmployeeList().add(employee);
 					departmentService.updateDepartment(department.getId(), department);
 				}
-			}
-			
+			}			
 		}
 		return success2(form, true, null);
 	}
@@ -295,6 +311,11 @@ public class EmployeeAction extends BaseAction {
 			String fileClass = form.get("fileClass").toString();
 			form.addResult("fileClass", fileClass);
 		}
+		
+		if(null!=form.get("serial")&&!"".equals(form.get("serial").toString())){
+			String serial = form.get("serial").toString();
+			form.addResult("serial", serial);
+		}
 	}
 	
 	public Page searchFile(WebForm form) {
@@ -334,6 +355,11 @@ public class EmployeeAction extends BaseAction {
 				}else{                                           //是code的情况
 					qo.addQuery("fileClass.code = ?", new Object[]{fileClass});
 				}
+			}
+			
+			if(null!=form.get("serial")&&!"".equals(form.get("serial").toString())){
+				String serial = form.get("serial").toString();
+				qo.addQuery(" code like '%"+serial+"%'", null);
 			}
 			
 			qo.addQuery(" disabled = ?", new Object[]{false});
@@ -403,7 +429,16 @@ public class EmployeeAction extends BaseAction {
 				
 				for(Object obj : fileClassList){
 					FileClass fileClass = (FileClass) obj;
-					if(null!=fileClass.getParent()&&!fcList.contains(fileClass)&&!fileClass.getDisabled()){
+					//if(null!=fileClass.getParent()&&!fcList.contains(fileClass)&&!fileClass.getDisabled()){
+					if("01.01".equals(fileClass.getCode())
+					 ||"01.02".equals(fileClass.getCode())
+					 ||"01.03".equals(fileClass.getCode())
+					 ||"04.02".equals(fileClass.getCode())
+					 ||"02.02".equals(fileClass.getCode())
+					 ||"02.01".equals(fileClass.getCode())
+					 ||"03.03".equals(fileClass.getCode())
+					 ||"04.04".equals(fileClass.getCode())
+					 ||"06.03".equals(fileClass.getCode())){
 						Employee bean = new Employee();
 						String code = "";
 						if(null!=department.getTuhao())
@@ -440,6 +475,13 @@ public class EmployeeAction extends BaseAction {
 		//根据物料查询
 		if(null!=form.get("department")&&!"".equals(form.get("department").toString())){
 			String code = form.get("department").toString();
+			if(-1==code.indexOf(".")){
+				if(-1!=code.toLowerCase().indexOf("work"))            //如果是任务单的情况
+					code = jdbcService.queryForWorkNo(code);
+				else
+					code = departmentService.queryForTuhao(code);
+			}
+			
 			qo.addQuery("department.code = ?", new Object[]{code});
 				
 			//根据工位查询
@@ -451,8 +493,18 @@ public class EmployeeAction extends BaseAction {
 			
 			//根据文件类型
 			if(null!=form.get("fileClass")&&!"".equals(form.get("fileClass").toString())){
-				Long fileClass = Long.valueOf(form.get("fileClass").toString());
-				qo.addQuery("fileClass.id = ?", new Object[]{fileClass});
+				String fileClass = form.get("fileClass").toString();
+				if(-1==fileClass.indexOf(".")){                  //是id的情况
+					Long fileClassId = Long.valueOf(form.get("fileClass").toString());
+					qo.addQuery("fileClass.id = ?", new Object[]{fileClassId});
+				}else{                                           //是code的情况
+					qo.addQuery("fileClass.code = ?", new Object[]{fileClass});
+				}
+			}
+			
+			if(null!=form.get("serial")&&!"".equals(form.get("serial").toString())){
+				String serial = form.get("serial").toString();
+				qo.addQuery(" code like '%"+serial+"%'", null);
 			}
 			
 			qo.addQuery(" disabled = ?", new Object[]{false});
@@ -569,6 +621,60 @@ public class EmployeeAction extends BaseAction {
 		
 		form.addResult("files", files);
 		return page("extrafile");
+	}
+	
+	public Page check(WebForm form){
+		Object resp = form.get("resp");
+		JSONParser parser = new JSONParser();
+		JSONObject obj;
+		try {
+			obj = (JSONObject) parser.parse(resp.toString());
+			JSONArray list = (JSONArray) obj.get("rows");
+			for(Object jboj : list){
+				JSONObject row = (JSONObject) jboj;
+				try{
+					Long id = new Long(CommUtil.null2String(row.get("id")));
+					Employee employee = service.getEmployee(id);
+					employee.setChecked(true);
+					employee.setChecker(getUser().getAccount());
+					employee.setCheckDate(new Date(System.currentTimeMillis()));
+					service.updateEmployee(id, employee);
+				} catch(java.lang.NumberFormatException e){
+					continue;
+				}
+			}
+		} catch (org.json.simple.parser.ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return success2(form, true, "处理完毕！");
+	}
+	
+	public Page uncheck(WebForm form){
+		Object resp = form.get("resp");
+		JSONParser parser = new JSONParser();
+		JSONObject obj;
+		try {
+			obj = (JSONObject) parser.parse(resp.toString());
+			JSONArray list = (JSONArray) obj.get("rows");
+			for(Object jboj : list){
+				JSONObject row = (JSONObject) jboj;
+				try{
+					Long id = new Long(CommUtil.null2String(row.get("id")));
+					Employee employee = service.getEmployee(id);
+					employee.setChecked(false);
+					employee.setChecker(null);
+					employee.setCheckDate(null);
+					service.updateEmployee(id, employee);
+				} catch(java.lang.NumberFormatException e){
+					continue;
+				}
+			}
+		} catch (org.json.simple.parser.ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return success2(form, true, "处理完毕！");
 	}
 	
 	public static void main(String[] args) {

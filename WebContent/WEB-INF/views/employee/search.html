@@ -19,13 +19,14 @@
 		frame = new EmployeeSearchPanel({
 			#if($department)department:'$department' #end
 			#if($fileClass),fileClass:'$fileClass' #end
+			#if($serial),serial:'$serial' #end
 		});
 
 		var department = frame.departmentField.getValue();
 		if(''!=department){
 			frame.panel.load({
 	            url: "employee.do?cmd=searchFile",
-	            params: {department: frame.department, fileClass: frame.fileClass},
+	            params: {department: frame.department, fileClass: frame.fileClass, serial: frame.serial},
 	            text: "Loading...",
 	            timeout: 30,
 	            scripts: false,

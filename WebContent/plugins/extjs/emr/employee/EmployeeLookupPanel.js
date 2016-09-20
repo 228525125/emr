@@ -101,14 +101,14 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
 					storeThis.baseParams.departmentId = this.departmentId;					
 				},scope:this}
 			},
-			baseParams:{pageSize:2000,disabled:'false'}
+			baseParams:{pageSize:2000,disabled:'false',checked:'true'}
 		});
 		
 		this.departmentStore = new Ext.data.JsonStore({
 			url: 'department.do?cmd=list',
 			root:"result",
 			fields:["id","tuhao","name","code"],
-			baseParams:{notNullField:'tuhao',pageSize:1000}
+			baseParams:{notNullField:'tuhao',pageSize:200}
 		});
 		
 		this.departmentName='';
@@ -173,20 +173,43 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
 					    valueField: 'id',
 					    displayField: 'tuhao',
 					    emptyText: '请选择物料...',
-					    mode: 'local',
+					    mode: 'remote',
 					    store: this.departmentStore,
 					    triggerAction: 'all',
 					    listeners: {
 							'select':{fn:function(combo,newValue,oldValue){														
 								this.departmentId = newValue.data.id;
-								this.tree.getRootNode().id = this.organizationId+','+this.departmentId;  //重置组织架构tree重置
-								this.tree.getRootNode().setText("("+newValue.data.code+")"+newValue.data.name);
+								this.tree.getRootNode().id = this.departmentId;
+								this.tree.getRootNode().setText(newValue.data.name);
+								this.store.load();
 								this.tree.getLoader().load(this.tree.getRootNode());
-								this.store.load();								  //加载新的机构职员
 							},scope:this}
 						}
-					},				
-                    {
+					},
+					{
+                        xtype: 'treepanel',
+                        id: 'icbomtreepanel',	
+                        border: false,
+                        root: {
+                            text: '物料',
+                            id: '0'                      //分别表示机构编号、部门编号
+                        },
+                        loader: {
+                            url: 'department.do?cmd=icbomtree',                            
+                            listeners: {
+                        		'beforeload':function(loader,node){
+	    							loader.baseParams.departmentId=node.id;
+	    						}
+                        	}
+                        },
+                        listeners: {                        	
+                        	'click':{fn:function(node,e){
+	                			this.departmentId = node.id;	                			
+	                			this.store.load();   //刷新右边的内容
+	                		},scope:this}
+                        }
+                    }
+                    /*{
                         xtype: 'treepanel',
                         id: 'departmenttreepanel',	
                         border: false,
@@ -213,7 +236,7 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
 	                				this.store.load();                       //刷新右边的内容
 	                		},scope:this}
                         }
-                    }
+                    }*/
                 ]
             },
             {
@@ -246,8 +269,17 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                                 xtype: 'gridcolumn',
                                 header: '名称',
                                 sortable: true,
+                                hidden: false,
                                 width: 180,
                                 dataIndex: 'name'
+                            },
+                            {
+                                xtype: 'gridcolumn',
+                                header: '所属物料',
+                                sortable: false,
+                                width: 100,
+                                dataIndex: 'department'/*,
+                                renderer:function(value){if(value&&null!=value){return value.name;}else{return '';}}*/
                             },
                             {
                                 xtype: 'gridcolumn',
@@ -283,14 +315,6 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                             },
                             {
                                 xtype: 'gridcolumn',
-                                header: '所属物料',
-                                sortable: false,
-                                width: 100,
-                                dataIndex: 'department'/*,
-                                renderer:function(value){if(value&&null!=value){return value.name;}else{return '';}}*/
-                            },
-                            {
-                                xtype: 'gridcolumn',
                                 header: '工位',
                                 sortable: false,
                                 width: 60,
@@ -322,26 +346,25 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                                 width: 50,
                                 dataIndex: 'departmentCode',
                                 renderer:{fn:function(value,metadata,record){
-                            		var isEmpty = record.get("empty");
+                                	var isEmpty = record.get("empty");
                             		if(isEmpty)
                             			return '';
                             		else{
                             			var cite = record.get('cite');
-                            			if(null==cite || ''==cite)
-                            				return '<a href="employee.do?cmd=search&department='+value+'&fileClass='+record.get('fileClass').id+'" target="_blank"><font color=blue>查看文档</font></a>';
-                            			else{
-                            				var department = '';
-                            				if('09'==cite.substr(0,cite.indexOf('.'))){
-                            					var i = cite.indexOf('.')+1;       // '09.'
-                            					department = cite.substr(0,i);
-                            					var temp = cite.substr(i,cite.length);
-                            					department += temp.substr(0,temp.indexOf('.'));
-                            				}else{
-                            					department = cite.substr(0,cite.indexOf('.'));
-                            				}
+                            			if(null==cite || ''==cite){
+                            				var code = record.get('code');
+                            				var serial = code.substr(code.lastIndexOf('.')+1,code.length);
+                            				return '<a href="employee.do?cmd=search&department='+value+'&fileClass='+record.get('fileClass').id+'&serial='+serial+'" target="_blank"><font color=blue>查看文档</font></a>';
+                            			}else{
                             				var index = cite.lastIndexOf('.');
                             				var fileClass = cite.substr(index-5,5);
-                            				return '<a href="employee.do?cmd=search&department='+department+'&fileClass='+fileClass+'" target="_blank"><font color=blue>查看文档</font></a>';
+                            				var department = '';
+                            				if(cite.lastIndexOf(fileClass)==cite.indexOf(fileClass))     //AB7001EL.02.02.029879 : department=AB7001EL.02 
+                            					department = cite.substr(0,cite.lastIndexOf(fileClass)-1);
+                            				else
+                            					department = cite.substr(0,cite.indexOf(fileClass)-1);
+                            				var serial = cite.substr(index+1,cite.length);
+                            				return '<a href="employee.do?cmd=search&department='+department+'&fileClass='+fileClass+'&serial='+serial+'" target="_blank"><font color=blue>查看文档</font></a>';
                             			}
                             		}
 	          		    	  			
@@ -363,22 +386,9 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                             },
                             /*{
                                 xtype: 'gridcolumn',
-                                header: '版本',
-                                sortable: false,
-                                width: 50,
-                                dataIndex: 'departmentCode',
-                                renderer:{fn:function(value,metadata,record){
-                            		var isEmpty = record.get("empty");
-                            		if(isEmpty)
-                            			return '';
-                            		else
-	          		    	  			return '<a href="employee.do?cmd=history&department='+value+'&fileClass='+record.get('fileClass').id+'" target="_blank"><font color=blue>历史版本</font></a>';
-	          		      		},scope:this}
-                            },*/
-                            {
-                                xtype: 'gridcolumn',
                                 header: '附件',
                                 sortable: false,
+                                hidden: true,
                                 width: 50,
                                 dataIndex: 'departmentCode',
                                 renderer:{fn:function(value,metadata,record){
@@ -388,7 +398,7 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                             		else
 	          		    	  			return '<a href="employee.do?cmd=extrafile&code='+record.get('code')+'" target="_blank"><font color=blue>查看附件</font></a>';
 	          		      		},scope:this}
-                            },
+                            },*/
                             {
                                 xtype: 'gridcolumn',
                                 header: '',                                
@@ -424,7 +434,7 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
         
         this.on('render',function(t){        	
         	this.gp = Ext.getCmp('employeegrid');
-        	this.tree = Ext.getCmp('departmenttreepanel');	
+        	this.tree = Ext.getCmp('icbomtreepanel');	
         	this.departmentCombo = Ext.getCmp('departmentselect');        	
 			this.store.load();			
 			this.departmentStore.load();

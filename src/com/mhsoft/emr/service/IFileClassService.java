@@ -55,4 +55,6 @@ public interface IFileClassService {
 	boolean updateFileClass(Long id,FileClass instance);
 	
 	String loadTree(Integer currentNodeId);
+	
+	FileClass getFileClas(String code);
 }

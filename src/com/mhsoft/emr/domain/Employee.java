@@ -77,6 +77,13 @@ public class Employee {
 	
 	private String cite;               //引用的文件编码         
 	
+	private Boolean checked = false; //审核
+	
+	private String checker;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date checkDate;                 //审核时间
+	
 	public Long getId() {
 		return id;
 	}
@@ -220,5 +227,28 @@ public class Employee {
 	public void setCite(String cite) {
 		this.cite = cite;
 	}
-	
+
+	public Boolean getChecked() {
+		return checked;
+	}
+
+	public void setChecked(Boolean checked) {
+		this.checked = checked;
+	}
+
+	public String getChecker() {
+		return checker;
+	}
+
+	public void setChecker(String checker) {
+		this.checker = checker;
+	}
+
+	public Date getCheckDate() {
+		return checkDate;
+	}
+
+	public void setCheckDate(Date checkDate) {
+		this.checkDate = checkDate;
+	}
 }

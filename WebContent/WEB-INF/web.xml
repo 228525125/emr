@@ -13,7 +13,7 @@
 	
 	<context-param>
 		<param-name>queryForFileType</param-name>
-		<param-value>.pdf</param-value>
+		<param-value>.pdf,.xls,.xlsx,.doc,.docx</param-value>
 		<!-- <param-value>.jpg,.png</param-value>  -->
 	</context-param>
 	

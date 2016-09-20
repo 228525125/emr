@@ -86,6 +86,14 @@
 			href:'fileClass.do',
 			hrefTarget:'rightFrame'
 		});
+		
+		var icbom = new Ext.tree.TreeNode({                     //查询
+			id:'icbom',
+			iconCls:'appIcon',
+			text:'BOM视图',
+			href:'department.do?cmd=icbom',
+			hrefTarget:'rightFrame'
+		});
 
 		var search = new Ext.tree.TreeNode({                     //查询
 			id:'search',
@@ -136,6 +144,7 @@
 		zuzhijiagou.appendChild(jiaose);
 		zuzhijiagou.appendChild(yonghuxinxi);
 		zuzhijiagou.appendChild(fileclass);
+		zuzhijiagou.appendChild(icbom);
 		zuzhijiagou.appendChild(search);
 		zuzhijiagou.appendChild(lookup);
 		zuzhijiagou.appendChild(log);

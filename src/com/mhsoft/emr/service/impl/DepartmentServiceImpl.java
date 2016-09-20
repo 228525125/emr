@@ -130,4 +130,15 @@ public class DepartmentServiceImpl implements IDepartmentService{
 		else
 			return list.get(0).toString();
 	}
+	
+	@Override
+	public Department getDepartment(String tuhao) {
+		// TODO Auto-generated method stub
+		String sql = "select d from Department d where d.tuhao='"+tuhao+"'";
+		List list = departmentDao.query(sql, null, 0, 1);
+		if(list.isEmpty())
+			return null;
+		else
+			return (Department) list.get(0);
+	}
 }

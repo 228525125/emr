@@ -10,6 +10,7 @@ import com.mhsoft.emr.domain.Employee;
 import com.mhsoft.emr.domain.Organization;
 import com.mhsoft.emr.service.IDepartmentService;
 import com.mhsoft.emr.service.IEmployeeService;
+import com.mhsoft.emr.service.JDBCQueryService;
 import com.mhsoft.emr.util.AppContext;
 import com.easyjf.container.annonation.Action;
 import com.easyjf.container.annonation.Inject;
@@ -42,6 +43,9 @@ public class DepartmentAction extends BaseAction {
 	
 	@Inject
 	private IEmployeeService employeeService;
+	
+	@Inject
+	private JDBCQueryService jdbcqueryService;
 
 	public void setService(IDepartmentService service) {
 		this.service = service;
@@ -49,6 +53,10 @@ public class DepartmentAction extends BaseAction {
 	
 	public void setEmployeeService(IEmployeeService employeeService) {
 		this.employeeService = employeeService;
+	}
+
+	public void setJdbcqueryService(JDBCQueryService jdbcqueryService) {
+		this.jdbcqueryService = jdbcqueryService;
 	}
 
 	public Page doIndex(WebForm f, Module m) {
@@ -92,6 +100,8 @@ public class DepartmentAction extends BaseAction {
 			String notNullField = form.get("notNullField").toString();
 			qo.addQuery(notNullField+" is not null and "+notNullField+"<>''", null);
 		}
+		
+		qo.addQuery("disabled=?", new Object[]{false});
 		
 		IPageList pageList = service.getDepartmentBy(qo);		
 		Map<String,Object> result = new HashMap<String,Object>();
@@ -178,6 +188,45 @@ public class DepartmentAction extends BaseAction {
 			Integer did = new Integer(form.get("departmentId").toString());
 			Integer oid = new Integer(form.get("organizationId").toString());
 			form.addResult("json", service.loadTree(oid,did));			
+		}
+		return getJsonByPage();
+	}
+	
+	/*   这个方法配合 IcbomPanel 使用，用来展示bom
+	public Page icbomhild(WebForm form){
+		
+		QueryObject qo = form.toPo(QueryObject.class);
+		if(null!=form.get("departmentId")&&!"".equals(form.get("departmentId"))){
+			String fnumber = form.get("departmentId").toString();
+			
+			String querySQL = "select d.FNumber,d.FName,d.FModel,d.FHelpCode " +
+					 " from AIS20091218114908.dbo.ICBOM a " + 
+					 " left join AIS20091218114908.dbo.ICBOMCHILD b on a.FInterID=b.FInterID " +
+					 " left join AIS20091218114908.dbo.t_ICItem c on a.FItemID=c.FItemID " +
+					 " left join AIS20091218114908.dbo.t_ICItem d on b.FItemID=d.FItemID " +
+					 " where 1=1 " +
+					 " and c.FNumber = '"+fnumber+"' " +
+					 " order by c.FNumber ";
+			
+			String totalSQL = "select count(1) " +
+					 " from AIS20091218114908.dbo.ICBOM a " + 
+					 " left join AIS20091218114908.dbo.ICBOMCHILD b on a.FInterID=b.FInterID " +
+					 " left join AIS20091218114908.dbo.t_ICItem c on a.FItemID=c.FItemID " +
+					 " left join AIS20091218114908.dbo.t_ICItem d on b.FItemID=d.FItemID " +
+					 " where 1=1 " +
+					 " and c.FNumber = '"+fnumber+"' ";
+			
+			IPageList pageList = jdbcqueryService.query(qo, totalSQL, querySQL);
+			
+			form.jsonResult(pageList);
+		}
+		return Page.JSONPage;
+	}*/
+	
+	public Page icbomtree(WebForm form){
+		if(null!=form.get("departmentId")&&!"".equals(form.get("departmentId").toString())){    
+			Integer did = Integer.valueOf(form.get("departmentId").toString());
+			form.addResult("json", jdbcqueryService.icbomTree(did));			
 		}
 		return getJsonByPage();
 	}

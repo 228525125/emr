@@ -2,6 +2,7 @@ package com.mhsoft.emr.mvc;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,9 +25,11 @@ import com.easyjf.web.WebForm;
 import com.mhsoft.emr.domain.Department;
 import com.mhsoft.emr.domain.Employee;
 import com.mhsoft.emr.domain.EmrUser;
+import com.mhsoft.emr.domain.FileClass;
 import com.mhsoft.emr.domain.Organization;
 import com.mhsoft.emr.service.IDepartmentService;
 import com.mhsoft.emr.service.IEmployeeService;
+import com.mhsoft.emr.service.IFileClassService;
 import com.mhsoft.emr.service.IMaxidService;
 import com.mhsoft.emr.service.IOrganizationService;
 import com.mhsoft.emr.util.Logger;
@@ -46,6 +49,9 @@ public class UploadAction extends BaseAction {
 	private IOrganizationService organizationService;
 	
 	@Inject
+	private IFileClassService fileClassService;
+	
+	@Inject
 	private IMaxidService maxidService;
 
 	public void setDepartmentService(IDepartmentService departmentService) {
@@ -60,6 +66,10 @@ public class UploadAction extends BaseAction {
 		this.service = service;
 	}
 	
+	public void setFileClassService(IFileClassService fileClassService) {
+		this.fileClassService = fileClassService;
+	}
+
 	public void setMaxidService(IMaxidService maxidService) {
 		this.maxidService = maxidService;
 	}
@@ -112,6 +122,13 @@ public class UploadAction extends BaseAction {
 			if (!hasErrors()){
 				Boolean empty = object.getEmpty();   //是否引用或上传文档
 				
+				String code = "";
+				if(null!=department.getTuhao()&&!"".equals(department.getTuhao()))
+					code = department.getTuhao();
+				else
+					code = department.getCode();
+				object.setCode(code+"."+object.getFileClass().getCode()+"."+maxidService.createMaxId(6));
+				
 				if(!form.getFileElement().keySet().isEmpty()){
 					String selected = saveFile(form, fileSavePath+object.getCode()+"/"+object.getFileClass().getCode(),object.getCode(), getUser().getAccount(), object.getVersion());
 					if(!"".equals(selected)){       //表示上传文件
@@ -131,12 +148,7 @@ public class UploadAction extends BaseAction {
 					empty = false;
 				}
 				
-				String code = "";
-				if(null!=department.getTuhao())
-					code = department.getTuhao();
-				else
-					code = department.getCode();
-				object.setCode(code+"."+object.getFileClass().getCode()+"."+maxidService.createMaxId(6));				
+				object.setEmpty(empty);
 				
 				department.getEmployeeList().add(object);
 				organization.getEmployeeList().add(object);
@@ -146,6 +158,96 @@ public class UploadAction extends BaseAction {
 				log += "[FileCode:"+object.getCode()+"]";
 			}
 		}
+		
+		///////////////////////////////////////////////
+		/*String path = "F:/CX/项目/MyEclipse/workspace101/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/emr/pdff/";
+		
+		File file = new File(path);
+		
+		int i = 0;
+		
+		long fid = 1802815;
+		
+		List<String> result = new ArrayList<String>();
+		
+		for(File f : file.listFiles()){ 
+			String fileName = f.getName();
+			
+			System.out.println("--------"+fileName+":begin---------");
+			
+			List<String> list = new ArrayList<String>();
+			String [] ss = fileName.split("\\[");
+			for(String s : ss){
+				if(s.length()>2){
+					list.add(s.substring(0, s.indexOf("]")));
+				}
+			}
+			if(4==list.size()){
+				String code = list.get(0);
+				String account = list.get(1);
+				
+				DateFormat datef = new SimpleDateFormat("yyyy-MM-dd");
+				String dateString = list.get(2);
+				Date date = null;
+				try {
+					date = datef.parse(dateString);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				String version = list.get(3);
+				
+				
+				String tuhao = code.substring(0, code.indexOf("."));
+				String id = code.substring(code.lastIndexOf(".")+1);
+				String fileClassCode = code.substring(tuhao.length()+1,code.lastIndexOf(id)-1);
+				
+				
+				
+				Department department = departmentService.getDepartment(tuhao);
+				if(null==department)
+					continue;
+				Organization organization = department.getOrganization();
+				FileClass fileClass = fileClassService.getFileClas(fileClassCode);
+				
+				if(null==fileClass)
+					continue;
+				
+				String sql = "";
+				sql += "IF EXISTS(select 1 from employee where code='"+code+"') update employee set date='"+dateString+"',empty=0,version='"+version+"',selected='"+fileName+"',checked=1,checker='admin',checkDate=getdate() where code='"+code+"' ELSE BEGIN "
+						+ "insert employee (id,code,name,auxCode,disabled,description,address,level,date,fileClassId,departmentId,empty,version,selected,extraEmpty,cite,checked,checker,checkDate) "
+						+ "values ("+fid+",'"+code+"','"+department.getName()+" - "+fileClass.getName()+"',null,0,'xthf',null,null,'"+dateString+"',"+fileClass.getId()+","+department.getId()+",0,'"+version+"','"+fileName+"',1,null,1,'admin',getdate()) insert OrganizationASEmployee (organizationId,employeeId) values (1,"+fid+") END ";
+
+				result.add(sql);	*/			
+				
+				/*Employee employee = form.toPo(Employee.class);
+				employee.setId(null);
+				employee.setCode(code);
+				employee.setName(department.getName()+"-"+fileClass.getName());
+				employee.setDate(date);
+				employee.setFileClass(fileClass);
+				employee.setEmpty(false);
+				employee.setVersion(version);
+				employee.setSelected(fileName);
+				
+				organization.getEmployeeList().add(employee);
+				department.getEmployeeList().add(employee);
+				departmentService.updateDepartment(department.getId(), department);
+				organizationService.updateOrganization(organization.getId(), organization);*/
+				
+				/*i++;
+				fid += 1l;
+				System.out.println("--------"+fileName+":end---------");
+			}
+		}
+		
+		for(String sql : result)
+			System.out.println(sql);*/
+		
+		//////////////////////////////////////////////////////////
+		
+		
 		
 		String IP = ActionContext.getContext().getRequest().getRemoteAddr();
 		Logger.getLogger(IP).warn(log);

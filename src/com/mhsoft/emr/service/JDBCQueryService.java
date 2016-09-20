@@ -45,4 +45,6 @@ public interface JDBCQueryService {
 	 * @return
 	 */
 	String queryForWorkNo(String BillNo);
+	
+	public String icbomTree(Integer did);
 }

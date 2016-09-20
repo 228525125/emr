@@ -64,4 +64,6 @@ public interface IDepartmentService {
 	 * @return
 	 */
 	String queryForTuhao(String tuhao);
+	
+	Department getDepartment(String tuhao);
 }

@@ -45,6 +45,8 @@ public class Department {
 	
 	private String tuhao;  //图号
 	
+	private String number; //物料代码
+	
 	private Boolean disabled = false; //禁用
 	
 	private String description;       //描述
