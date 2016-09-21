@@ -92,7 +92,7 @@ public class UploadAction extends BaseAction {
 				Boolean empty = object.getEmpty();   //是否引用或上传文档
 				
 				if(!form.getFileElement().keySet().isEmpty()){
-					String selected = saveFile(form, fileSavePath+object.getCode()+"/"+object.getFileClass().getCode(),object.getCode(), getUser().getAccount(), object.getVersion());
+					String selected = saveFile(form, fileSavePath+object.getCode()+"/"+object.getFileClass().getCode(),object, getUser().getAccount(), object.getVersion());
 					if(!"".equals(selected)){       //表示没有上传文件，只是修改了字段
 						object.setSelected(selected);
 						empty = false;
@@ -130,7 +130,7 @@ public class UploadAction extends BaseAction {
 				object.setCode(code+"."+object.getFileClass().getCode()+"."+maxidService.createMaxId(6));
 				
 				if(!form.getFileElement().keySet().isEmpty()){
-					String selected = saveFile(form, fileSavePath+object.getCode()+"/"+object.getFileClass().getCode(),object.getCode(), getUser().getAccount(), object.getVersion());
+					String selected = saveFile(form, fileSavePath+object.getCode()+"/"+object.getFileClass().getCode(),object, getUser().getAccount(), object.getVersion());
 					if(!"".equals(selected)){       //表示上传文件
 						object.setSelected(selected);
 						empty = false;
@@ -265,7 +265,7 @@ public class UploadAction extends BaseAction {
 	 * @param version
 	 * @return 返回保存的文件名
 	 */
-	public static String saveFile(WebForm form, String upLoadPath, String fileCode, String user, String version){
+	public static String saveFile(WebForm form, String upLoadPath, Employee employee, String user, String version){
 		String fileName = "";
 		Set keys = form.getFileElement().keySet();
 		for (Iterator it = keys.iterator(); it.hasNext();) {				
@@ -294,7 +294,7 @@ public class UploadAction extends BaseAction {
 			    	String curDate = curTime.substring(0, 10);
 			    	String v = getVersion(file, version);
 			    	
-			    	fileName = "["+fileCode+"]["+user+"]["+curDate+"]["+version+"-"+v+"]."+suffix.toLowerCase(); 
+			    	fileName = "["+employee.getCode()+"]["+employee.getName()+"]["+user+"]["+curDate+"]["+version+"-"+v+"]."+suffix.toLowerCase(); 
 			    	
 			    	file = new File(upLoadPath+"/"+fileName);
 			    	if(!file.exists()){
