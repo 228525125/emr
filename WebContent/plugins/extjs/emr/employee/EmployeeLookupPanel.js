@@ -243,11 +243,18 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                 xtype: 'panel',
                 region: 'center',
                 margins: '0 0 0 0',
-                layout: 'fit',
+                layout: 'border',
                 items: [
+                    /*new Ext.Panel({
+                    	xtype: 'panel',
+                    	region: 'north',
+                    	title: '技术通知',
+                    	//items:[new RssPanel()]
+                    	//html:'jishutonghi'
+                    }),*/
                     {
                         xtype: 'grid',
-                        
+                        region: 'center',
                         border: false,
                         loadMask: true,
                         trackMouseOver: false,

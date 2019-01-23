@@ -43,4 +43,7 @@
   <bean id="maxidService" class="com.mhsoft.emr.service.impl.MaxidServiceImpl"> 
     <property name="maxidDao" ref="maxidDao"/> 
   </bean>
+  <bean id="notifyService" class="com.mhsoft.emr.service.impl.NotifyServiceImpl"> 
+    <property name="notifyDao" ref="notifyDao"/> 
+  </bean>
 </beans>

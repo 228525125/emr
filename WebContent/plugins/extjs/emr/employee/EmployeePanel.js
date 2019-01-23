@@ -24,6 +24,11 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
 				items:[this.fp],
 				buttons:[{text:"保存",
 						  handler:function(){
+							
+							if(undefined!=this.fp.fileClassId && this.fp.form.findField("fileClass").getValue()!=this.fp.fileClassId){
+								Ext.Msg.alert("提示","文件类型无法修改！");
+								return ;
+							}
 							this.fp.form.submit({
 									waitMsg:'正在保存。。。',
 						            url:'upload.do',
@@ -86,7 +91,8 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
 		if(record.get("departmentId")&&null!=record.get("departmentId")){
 			this.fp.form.findField("department").setValue(record.get("departmentId"));				
 		}
-		this.fp.form.findField("fileClass").setValue(record.get("fileClass").id);	
+		this.fp.form.findField("fileClass").setValue(record.get("fileClass").id);
+		this.fp.fileClassId = record.get("fileClass").id;
 	},
     initComponent: function() {
 		this.store = new Ext.data.JsonStore({
@@ -261,7 +267,7 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                                 xtype: 'gridcolumn',
                                 header: '所属物料',
                                 sortable: false,
-                                width: 100,
+                                width: 200,
                                 dataIndex: 'department'/*,
                                 renderer:function(value){if(value&&null!=value){return value.name;}else{return '';}}*/
                             },
@@ -277,7 +283,7 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                                 xtype: 'gridcolumn',
                                 header: '名称',
                                 sortable: true,
-                                hidden: false,
+                                hidden: true,
                                 width: 100,
                                 dataIndex: 'name'
                             },

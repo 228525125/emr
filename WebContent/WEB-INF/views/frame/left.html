@@ -110,6 +110,14 @@
 			href:'employee.do?cmd=lookup',
 			hrefTarget:'rightFrame'
 		});
+		
+		var notify = new Ext.tree.TreeNode({                     //查询
+			id:'notify',
+			iconCls:'appIcon',
+			text:'技术通知',
+			href:'notify.do?cmd=home',
+			hrefTarget:'rightFrame'
+		});
 
 		var log = new Ext.tree.TreeNode({                     //查询
 			id:'log',
@@ -147,6 +155,7 @@
 		zuzhijiagou.appendChild(icbom);
 		zuzhijiagou.appendChild(search);
 		zuzhijiagou.appendChild(lookup);
+		zuzhijiagou.appendChild(notify);
 		zuzhijiagou.appendChild(log);
 		/*xitongziyuan.appendChild(gongnengmokuai);
 		xitongziyuan.appendChild(caozuoquanxian);

@@ -35,7 +35,7 @@ public class Department {
 	private Long id;
 	
 	@Column(nullable=false,unique=true)
-	private String code;   //编码
+	private String code;   ////物料代码
 	
 	private String name;   //名称
 	
@@ -45,7 +45,7 @@ public class Department {
 	
 	private String tuhao;  //图号
 	
-	private String number; //物料代码
+	private String number; 
 	
 	private Boolean disabled = false; //禁用
 	
@@ -181,6 +181,14 @@ public class Department {
 
 	public void setGrade(Integer grade) {
 		this.grade = grade;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
 	}
 	
 }

@@ -1,0 +1,17 @@
+/build
+/WebContent/plugins/calendar/
+/WebContent/plugins/counter/
+/WebContent/plugins/jmesa/
+/WebContent/plugins/extjs/css/
+/WebContent/plugins/extjs/easyjf/
+/WebContent/plugins/extjs/ext-2.0/
+/WebContent/plugins/extjs/ext-3.2/
+/WebContent/temp/
+/WebContent/images/fam/
+/WebContent/images/orderby/
+/WebContent/images/top/
+/WebContent/META-INF/
+/WebContent/WEB-INF/lib/
+/.settings
+.classpath
+.project

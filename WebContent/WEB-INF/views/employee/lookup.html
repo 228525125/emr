@@ -5,6 +5,7 @@
 <title>文档查询系统</title>
 #parse("/link_share.html")
 <script type="text/javascript" src="plugins/extjs/emr/employee/EmployeeLookupPanel.js"></script>
+<script type="text/javascript" src="plugins/extjs/emr/notify/RssPanel.js"></script>
 </head>
 <body>
 
@@ -17,6 +18,24 @@
 	var frame;
 	Ext.onReady(function(){
 		frame = new EmployeeLookupPanel();
+		
+		/*new Ext.Viewport({
+			layout:'border',
+			items:[
+				new Ext.Panel({
+					title:'panel1',
+					region:'north',
+					width: '100%',
+					html:'高度等于100，宽度= 容器宽度-50'
+				})
+				,new Ext.Panel({
+					title:'panel1',
+					region:'center',
+					width: '100%',
+					items:[frame]
+				})
+			]
+		});*/
 	});
 	
 </script>

@@ -169,6 +169,18 @@
       </bean> 
     </property> 
   </bean>
+  <bean id="notifyDao" parent="abstractDao"> 
+    <property name="proxyInterfaces"> 
+      <value>com.mhsoft.emr.dao.INotifyDAO</value> 
+    </property>  
+    <property name="target"> 
+      <bean parent="baseDAO"> 
+        <constructor-arg> 
+          <value>com.mhsoft.emr.domain.Notify</value> 
+        </constructor-arg> 
+      </bean> 
+    </property> 
+  </bean>
   
   <!-- JDBC dao -->
   <bean id="jdbcQueryDao" class="com.mhsoft.emr.dao.impl.JDBCQueryDaoImpl">

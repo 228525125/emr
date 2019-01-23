@@ -26,11 +26,13 @@ import com.mhsoft.emr.domain.Department;
 import com.mhsoft.emr.domain.Employee;
 import com.mhsoft.emr.domain.EmrUser;
 import com.mhsoft.emr.domain.FileClass;
+import com.mhsoft.emr.domain.Notify;
 import com.mhsoft.emr.domain.Organization;
 import com.mhsoft.emr.service.IDepartmentService;
 import com.mhsoft.emr.service.IEmployeeService;
 import com.mhsoft.emr.service.IFileClassService;
 import com.mhsoft.emr.service.IMaxidService;
+import com.mhsoft.emr.service.INotifyService;
 import com.mhsoft.emr.service.IOrganizationService;
 import com.mhsoft.emr.util.Logger;
 import com.mhsoft.emr.util.PdfUtil;
@@ -53,6 +55,9 @@ public class UploadAction extends BaseAction {
 	
 	@Inject
 	private IMaxidService maxidService;
+	
+	@Inject
+	private INotifyService notifyService;
 
 	public void setDepartmentService(IDepartmentService departmentService) {
 		this.departmentService = departmentService;
@@ -72,6 +77,10 @@ public class UploadAction extends BaseAction {
 
 	public void setMaxidService(IMaxidService maxidService) {
 		this.maxidService = maxidService;
+	}
+	
+	public void setNotifyService(INotifyService notifyService) {
+		this.notifyService = notifyService;
 	}
 
 	public Page doIndex(WebForm form, Module m) {
@@ -294,7 +303,13 @@ public class UploadAction extends BaseAction {
 			    	String curDate = curTime.substring(0, 10);
 			    	String v = getVersion(file, version);
 			    	
-			    	fileName = "["+employee.getCode()+"]["+employee.getName()+"]["+user+"]["+curDate+"]["+version+"-"+v+"]."+suffix.toLowerCase(); 
+			    	String description = "";
+			    	if(!"".equals(employee.getDescription()) && null!=employee.getDescription())
+			    		description = employee.getDescription();
+			    		
+			    	fileName = "["+employee.getCode()+"]["+user+"]["+curDate+"]["+version+"-"+v+"]["+description+"]."+suffix.toLowerCase();
+			    	fileName = fileName.replaceAll("\\\\","-");
+			    	fileName = fileName.replaceAll("/","-");
 			    	
 			    	file = new File(upLoadPath+"/"+fileName);
 			    	if(!file.exists()){
@@ -321,6 +336,13 @@ public class UploadAction extends BaseAction {
 		}
 		
 		return fileName;
+	}
+	
+	public static void main(String[] args) {
+		String str = "[AB7001AR.01.02.032415][填料\\(R10[聚四氟乙烯])-产品转换图][admin][2016-09-21][A-1].pdf";
+		
+		str = str.replaceAll("\\\\", "-");
+		System.out.println(str);
 	}
 	
 	/**
@@ -405,14 +427,5 @@ public class UploadAction extends BaseAction {
     		return "1";
     	else
     		return String.valueOf(vList.get(vList.size()-1)+1);
-	}
-	
-	public static void main(String[] args) {
-		String str = "[文件编号][用户][日期][版本号]";
-		str = "20140815165840.pdf";
-		System.out.println(str.split("\\.")[1]);
-		
-		/*for(String s : str.split("]"))
-			System.out.println(s.substring(1, s.length()));*/
 	}
 }
