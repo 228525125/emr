@@ -116,6 +116,8 @@ public class UploadAction extends BaseAction {
 				
 				if(null!=object.getCite() && !"".equals(object.getCite())){
 					empty = false;
+					object.setSelected(null);
+					//删除文件由 垃圾文件回收机制处理
 				}
 				
 				object.setEmpty(empty);

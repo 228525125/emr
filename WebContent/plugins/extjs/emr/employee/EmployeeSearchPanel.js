@@ -1,4 +1,7 @@
-﻿EmployeeSearchPanel = Ext.extend(Ext.Viewport, {
+﻿/**
+ * 该模块用于平板模式的文档查询功能，但没有对引用的情况进行处理，因此取消工具栏
+ */
+EmployeeSearchPanel = Ext.extend(Ext.Viewport, {
 	layout: 'fit',
 	id:'employeesearchpanel',
     initComponent: function() {
@@ -103,7 +106,7 @@
             handler: function(){
 				this.panel.load({
 	            	url: "employee.do?cmd=searchFile",
-	            	params: {department: this.department, role: this.role, fileClass: this.fileClass},   //为什么不加 serial: this.serial 这个条件，因为这个模式是为扫描枪准备的，因此也不会使用这个功能来查看通用文档 
+	            	params: {department: this.department, role: this.role, fileClass: this.fileClass},   //为什么不加 serial: this.serial 这个条件，因为这个模式是为扫描枪准备的，所以不能加这个条件，另外扫码模式也不会使用这个功能来查看通用文档 
 	            	text: "Loading...",
 	            	timeout: 30,
 	            	scripts: false,
@@ -145,9 +148,9 @@
 		}); 
 		
 		this.panel = new Ext.Panel({
-			border:true,
-			autoScroll: true,
-			tbar:[
+			border:true
+			,autoScroll: true
+			/*,tbar:[
 				{
 				    xtype: 'spacer',
 				    width: 6
@@ -172,7 +175,7 @@
 				    width: 6
 				},this.queryButton,
 				'->','当前查询物料代码：',this.textField
-			]
+			]*/
 		});
 		
 		this.items = [this.panel];

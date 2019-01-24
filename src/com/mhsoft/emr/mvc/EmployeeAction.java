@@ -318,6 +318,11 @@ public class EmployeeAction extends BaseAction {
 		}
 	}
 	
+	/**
+	 * 该方法用于平板模式的文档查询功能，注意：该方法没有对引用的情况进行处理
+	 * @param form
+	 * @return
+	 */
 	public Page searchFile(WebForm form) {
 		ServletContext sc = ActionContext.getContext().getSession().getServletContext();
 		String fileSavePath = sc.getInitParameter("uploadPath");

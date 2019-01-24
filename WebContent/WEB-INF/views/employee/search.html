@@ -16,6 +16,7 @@
 	Ext.Ajax.timeout = 10 * 60 * 1000;  // 10分钟，默认为30秒  设置加载数据超时最大值
 	var frame;
 	Ext.onReady(function(){
+		//平板模式无法使用引用
 		frame = new EmployeeSearchPanel({
 			#if($department)department:'$department' #end
 			#if($fileClass),fileClass:'$fileClass' #end

@@ -47,6 +47,12 @@ public class JDBCQueryServiceImpl implements JDBCQueryService {
 	}
 	
 	@Override
+	public Object query(String sql, Class type) {
+		// TODO Auto-generated method stub
+		return jdbcDao.queryForObject(sql, type);
+	}
+	
+	@Override
 	public List query_dynamicgrid(QueryObject qo, String totalSQL, String querySQL, boolean isCallable) {
 		// TODO Auto-generated method stub			
 		IPageList pageList = QueryUtil.query(qo, totalSQL, querySQL, orderby, isCallable, jdbcDao);

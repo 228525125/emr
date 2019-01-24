@@ -33,6 +33,14 @@ public interface JDBCQueryService {
 	public List query(String sql);
 	
 	/**
+	 * 公共查询
+	 * @param sql
+	 * @param type
+	 * @return
+	 */
+	public Object query(String sql, Class type);
+	
+	/**
 	 * 只用于DynamicGrid的生成
 	 * @param sql
 	 * @return 返回的结果包含了表头数据，原理是sql语句把表头名称与dataIndex用分隔符分开例如：“名称-name”
