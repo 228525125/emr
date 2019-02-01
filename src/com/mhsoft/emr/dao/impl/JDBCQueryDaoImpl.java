@@ -43,6 +43,12 @@ public class JDBCQueryDaoImpl extends JdbcDaoSupport implements JDBCQueryDao {
 	}
 	
 	
+	@Override
+	public void execute(String sql) {
+		// TODO Auto-generated method stub
+		getJdbcTemplate().execute(sql);
+	}
+	
 
 	public List querySP(String sql, Object[] params, int start, int len) {
 		// TODO Auto-generated method stub

@@ -55,4 +55,6 @@ public interface JDBCQueryService {
 	String queryForWorkNo(String BillNo);
 	
 	public String icbomTree(Integer did);
+	
+	public void execute(String sql);
 }

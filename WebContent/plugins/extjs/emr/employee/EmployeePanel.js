@@ -131,7 +131,12 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
             store: this.store,
             width:220,
             emptyText:'请输入关键字...',
-            scope: this
+            scope: this,
+            listeners:{
+            	'change': {fn:function(fieldThis,newValue,oldValue,eOpts){
+					this.departmentId = 0;					
+				},scope:this}
+            }
         });
 		
 		this.state = new Ext.form.ComboBox({	        
@@ -530,17 +535,43 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                                     xtype: 'button',
                                     text: '批量添加',
                                     pressed: true,           
-                                    handler: function(){                                		
-                                		post({
-                                			url: 'employee.do?cmd=batchAddFile',
-                                			params: {departmentId:this.departmentId},
-                                			loadmask:true,
-                                			compId: 'employeegrid',
-                                			waitText:'正在处理.....',
-                                			store: this.store
-                                		});
-                                	
-                                		//this.store.reload();
+                                    handler: function(){
+                                    	if(undefined==this.departmentId || 0==this.departmentId || null==this.departmentId){
+                                    		Ext.Msg.alert('提示','请在左侧选择物料');
+                                    	}else{
+                                    		post({
+                                    			url: 'employee.do?cmd=batchAddFile',
+                                    			params: {departmentId:this.departmentId},
+                                    			loadmask:true,
+                                    			compId: 'employeegrid',
+                                    			waitText:'正在处理.....',
+                                    			store: this.store
+                                    		});
+                                    	}
+                                	},
+                                    scope:this
+                                },
+                                {
+                                    xtype: 'button',
+                                    text: '批量删除',
+                                    pressed: true,           
+                                    handler: function(){
+                                    	if(undefined==this.departmentId || 0==this.departmentId || null==this.departmentId){
+                                    		Ext.Msg.alert('提示','请在左侧选择物料');
+                                    	}else{
+                                    		Ext.Msg.confirm("提示!","您确定要删除当前物料下的所有文件吗？",function(btn){
+                                        		if(btn=="yes"){
+                                        			post({
+                                            			url: 'employee.do?cmd=batchDeleteFile',
+                                            			params: {departmentId:this.departmentId},
+                                            			loadmask:true,
+                                            			compId: 'employeegrid',
+                                            			waitText:'正在处理.....',
+                                            			store: this.store
+                                            		});
+                                        		}
+                                        	},this);
+                                    	}
                                 	},
                                     scope:this
                                 },'-',{

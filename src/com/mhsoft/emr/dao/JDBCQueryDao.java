@@ -19,4 +19,6 @@ public interface JDBCQueryDao {
 	
 	public Object execute(String callName, CallableStatementCallback csc);
 	
+	public void execute(String sql);
+	
 }
