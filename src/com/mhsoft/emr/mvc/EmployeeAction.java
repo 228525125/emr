@@ -1,6 +1,7 @@
 package com.mhsoft.emr.mvc;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -41,6 +43,7 @@ import com.easyjf.web.ActionContext;
 import com.easyjf.web.Module;
 import com.easyjf.web.Page;
 import com.easyjf.web.WebForm;
+import com.easyjf.web.errorhandler.RedirectErrorHandler;
 import com.easyjf.web.tools.IPageList;
 
 /**
@@ -397,6 +400,75 @@ public class EmployeeAction extends BaseAction {
 		
 		form.addResult("files", files);
 		return page("result");
+	}
+	
+	/**
+	 * 用于合格证程序接口
+	 * 条件：物料代码 + 文件类型代码 = 找到的第一个PDF文件 
+	 * @param form
+	 * @return
+	 */
+	public Page searchFile2(WebForm form, Module module) {
+		ServletContext sc = ActionContext.getContext().getSession().getServletContext();
+		String fileSavePath = sc.getInitParameter("uploadPath");
+		String queryForFileType = sc.getInitParameter("queryForFileType");
+		
+		QueryObject qo = form.toPo(QueryObject.class);
+		IPageList pageList = null;
+		String filePath = null;
+		
+		//根据物料查询
+		if(null!=form.get("department")&&!"".equals(form.get("department").toString())){
+			String code = form.get("department").toString();
+			qo.addQuery("department.code = ?", new Object[]{code});
+			
+			//根据文件类型
+			if(null!=form.get("fileClass")&&!"".equals(form.get("fileClass").toString())){
+				String fileClass = form.get("fileClass").toString();
+				qo.addQuery("fileClass.code = ?", new Object[]{fileClass});
+			}
+			
+			qo.addQuery(" disabled = ?", new Object[]{false});
+			
+			pageList = service.getEmployeeBy(qo);
+			List list = pageList.getResult();
+			if(null!=list){
+				Employee e = (Employee) list.get(0);
+				File file = new File(fileSavePath+e.getCode()+"/"+e.getFileClass().getCode()+"/"+e.getSelected());
+				if(file.exists()){
+					if(isQueryForFileType(file.getName(), queryForFileType)){
+						String path = "/file-backups/"+e.getCode()+"/"+e.getFileClass().getCode()+"/";
+						filePath = path+file.getName();
+					}
+				}
+			}
+		}
+		
+		if(null!=filePath){
+			HttpServletRequest request = ActionContext.getContext().getRequest();
+			String webRootUrl = getWebappRootUrl(request);
+			try {
+				ActionContext.getContext().getResponse().sendRedirect(webRootUrl+filePath);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return page("error");
+	} 
+	
+	/**
+	 * 获取web应用的根路径（url访问地址，如http://localhost:8090/mywebapp）
+	 * @return
+	 */
+	public static String getWebappRootUrl(HttpServletRequest request) {
+		String scheme = request.getScheme();
+		String serverName = request.getServerName();
+		int serverPort = request.getServerPort();
+		String contextPath = request.getContextPath();
+		// root根路径
+		String webappRootUrl = scheme + "://" + serverName + ":" + serverPort + contextPath;
+		return webappRootUrl;
 	}
 	
 	private Boolean isQueryForFileType(String fileName ,String queryForFileType){

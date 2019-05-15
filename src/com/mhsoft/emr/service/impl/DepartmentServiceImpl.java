@@ -86,7 +86,7 @@ public class DepartmentServiceImpl implements IDepartmentService{
 		sql += param2;
 		String orderBy = " order by o.code";
 		sql += orderBy;
-		List list = departmentDao.query(sql, null, 0, AppContext.RESULTSIZE);
+		List list = departmentDao.query(sql, null, 0, 4000);
 		for(int i=0;i<list.size();i++){
 			Department bean = (Department) list.get(i);
 			String id = "'"+bean.getOrganization().getId().toString()+","+bean.getId().toString()+"'";

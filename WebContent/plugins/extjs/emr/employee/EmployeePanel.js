@@ -113,7 +113,7 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
 			url: 'department.do?cmd=list',
 			root:"result",
 			fields:["id","tuhao","name","code"],
-			baseParams:{notNullField:'tuhao',pageSize:200}
+			baseParams:{notNullField:'tuhao',pageSize:2000}
 		});
 		
 		this.departmentName='';
