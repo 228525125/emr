@@ -276,7 +276,7 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                                 xtype: 'gridcolumn',
                                 header: '名称',
                                 sortable: true,
-                                hidden: false,
+                                hidden: true,
                                 width: 180,
                                 dataIndex: 'name'
                             },
@@ -284,7 +284,7 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                                 xtype: 'gridcolumn',
                                 header: '所属物料',
                                 sortable: false,
-                                width: 100,
+                                width: 230,
                                 dataIndex: 'department'/*,
                                 renderer:function(value){if(value&&null!=value){return value.name;}else{return '';}}*/
                             },
@@ -292,7 +292,7 @@ EmployeeLookupPanel = Ext.extend(Ext.Viewport, {
                                 xtype: 'gridcolumn',
                                 header: '描述',
                                 sortable: true,
-                                width: 180,
+                                width: 100,
                                 dataIndex: 'description'
                             },
                             {
