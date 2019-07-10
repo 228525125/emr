@@ -121,7 +121,7 @@ public class EmployeeAction extends BaseAction {
 		//根据条件模糊查找部门		
 		if(null!=form.get("query")&&!"".equals(form.get("query").toString())){			
 			String query = form.get("query").toString();
-			qo.addQuery("(obj.code like '%"+query+"%' or obj.department.tuhao like '%"+query+"%' or obj.department.model like '%"+query+"%' or obj.department.code like '%"+query+"%' or obj.department.name like '%"+query+"%')", null);
+			qo.addQuery("(obj.code like '%"+query+"%' or obj.description like '%"+query+"%' or obj.department.tuhao like '%"+query+"%' or obj.department.model like '%"+query+"%' or obj.department.code like '%"+query+"%' or obj.department.name like '%"+query+"%')", null);
 		}else{
 			//根据部门查询职员列表
 			if(null!=form.get("departmentId")&&!"".equals(form.get("departmentId").toString())){
