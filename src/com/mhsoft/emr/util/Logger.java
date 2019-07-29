@@ -6,14 +6,12 @@ import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import com.mhsoft.emr.mvc.UploadAction;
-
 public class Logger
 { 
 	public static org.apache.log4j.Logger logger;
 	static {
 		Properties prop = new Properties();
-		InputStream in = ClassLoader.getSystemResourceAsStream("log4j.lcf");
+		InputStream in = Logger.class.getResourceAsStream("log4j.lcf");
 		try {
 			prop.load(in);
 		} catch (IOException e) {

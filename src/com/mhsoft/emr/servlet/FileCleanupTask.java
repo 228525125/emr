@@ -39,70 +39,70 @@ public class FileCleanupTask extends TimerTask {
 		ApplicationContext context = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
 		JDBCQueryService jdbcService = (JDBCQueryService) context.getBean("jdbcService");
 		Date date = new Date(System.currentTimeMillis());
-		//if(3 == date.getHours()){       // 上午3点执行
-			Map<String, File> map = new HashMap<String, File>();
-			String fileSavePath = sc.getInitParameter("uploadPath");
-			File file = new File(fileSavePath);
+		Map<String, File> map = new HashMap<String, File>();
+		String fileSavePath = sc.getInitParameter("uploadPath");
+		File file = new File(fileSavePath);
+		
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+		Logger.warn("-------------开始清理文件！----"+"begin time:"+df.format(date)+"---------");
+		File [] files = queryFiles(file, 1);
+		
+		for(int i=0;i<files.length;i++){
+			File [] fils = queryFiles(files[i], 1);
 			
-			
-			File [] files = queryFiles(file, 1);
-			
-			for(int i=0;i<files.length;i++){
-				File [] fils = queryFiles(files[i], 1);
+			for(int j=0;j<fils.length;j++){
+				File [] fis = queryFiles(fils[j], 2);
 				
-				for(int j=0;j<fils.length;j++){
-					File [] fis = queryFiles(fils[j], 2);
-					
-					FileList.getInstance().addArray(fis);
-				}
+				FileList.getInstance().addArray(fis);
 			}
+		}
+		
+		
+		
+		for(String filePath : FileList.getInstance().getList()){
+			Integer index = filePath.lastIndexOf("\\");
 			
+			if(Integer.valueOf(-1).equals(index))    //文件路径问题，则跳过
+				continue;
 			
+			String fileName = filePath.substring(index+1);
 			
-			for(String filePath : FileList.getInstance().getList()){
-				Integer index = filePath.lastIndexOf("\\");
-				
-				if(Integer.valueOf(-1).equals(index))    //文件路径问题，则跳过
-					continue;
-				
-				String fileName = filePath.substring(index+1);
-				
-				if(50>fileName.length())      //如果文件名不正确，例如文件名里带有\；
-					continue;
-				
-				index = fileName.lastIndexOf(".");
-				if(Integer.valueOf(-1).equals(index))  //如果文件名没有后缀，跳过
-					continue;
-				
-				String suffix = fileName.substring(index);
-				
-				if(!".pdf".equals(suffix))             //如果不是pdf，跳过
-					continue;
-				
-				index = fileName.indexOf("]");
-				if(Integer.valueOf(-1).equals(index))   //文件名格式有问题，[PM9002WX.01.02.063752][zhangyiya][2018-02-12][A-1][]
-					continue;
-				
-				String name = fileName.substring(1, index);
+			if(50>fileName.length())      //如果文件名不正确，例如文件名里带有\；
+				continue;
+			
+			index = fileName.lastIndexOf(".");
+			if(Integer.valueOf(-1).equals(index))  //如果文件名没有后缀，跳过
+				continue;
+			
+			String suffix = fileName.substring(index);
+			
+			if(!".pdf".equals(suffix))             //如果不是pdf，跳过
+				continue;
+			
+			index = fileName.indexOf("]");
+			if(Integer.valueOf(-1).equals(index))   //文件名格式有问题，[PM9002WX.01.02.063752][zhangyiya][2018-02-12][A-1][]
+				continue;
+			
+			String name = fileName.substring(1, index);
 
-				String sql = "select selected from Employee where code='"+name+"'";
-				List result = jdbcService.query(sql);
-				if(!result.isEmpty()){
-					
-					Map bean = (Map) result.get(0);
-					Object selected = bean.get("selected");
-					if(null==selected){                  //没有选择文件的删除
-						if(DeleteFileUtil.delete(filePath))
-							Logger.warn("删除单个文件" + filePath + "成功！");
-					}
-				}else{                                   //数据库没有查找到记录的删除
+			String sql = "select selected from Employee where code='"+name+"'";
+			List result = jdbcService.query(sql);
+			if(!result.isEmpty()){
+				
+				Map bean = (Map) result.get(0);
+				Object selected = bean.get("selected");
+				if(null==selected){                  //没有选择文件的删除
 					if(DeleteFileUtil.delete(filePath))
 						Logger.warn("删除单个文件" + filePath + "成功！");
 				}
+			}else{                                   //数据库没有查找到记录的删除
+				if(DeleteFileUtil.delete(filePath))
+					Logger.warn("删除单个文件" + filePath + "成功！");
 			}
-			//SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			//System.out.println("task time:"+df.format(date));
-		//}
+		}
+		
+		Logger.warn("-------------清理结束！----"+"end time:"+df.format(date)+"---------");
 	}
 	
 	/**
