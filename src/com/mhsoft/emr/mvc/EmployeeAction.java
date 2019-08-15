@@ -542,7 +542,7 @@ public class EmployeeAction extends BaseAction {
 	}
 	
 	public Page batchDeleteFile(WebForm form) {
-		if("zhangyiya".equals(getUser().getAccount()) && null!=form.get("departmentId")&&!"".equals(form.get("departmentId").toString())){
+		if(("zhangyiya".equals(getUser().getAccount()) || "admin".equals(getUser().getAccount())) && null!=form.get("departmentId")&&!"".equals(form.get("departmentId").toString())){
 			Long id = new Long(CommUtil.null2String(form.get("departmentId")));
 			Department department = departmentService.getDepartment(id);
 			if(null!=department){
