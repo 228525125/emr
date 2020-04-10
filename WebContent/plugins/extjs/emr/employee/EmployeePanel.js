@@ -69,6 +69,8 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
 		else{
 			this.createForm();
 			this.win.show();
+			
+			this.fp.form.findField("name").setValue(''==this.departmentName?'添加文件':this.departmentName);
 		}
 	},
 	edit_employee:function(){

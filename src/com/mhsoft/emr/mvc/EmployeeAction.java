@@ -515,7 +515,8 @@ public class EmployeeAction extends BaseAction {
 					 ||"02.01".equals(fileClass.getCode())
 					 ||"03.03".equals(fileClass.getCode())
 					 ||"04.04".equals(fileClass.getCode())
-					 ||"06.03".equals(fileClass.getCode())){
+					 ||"06.03".equals(fileClass.getCode())
+					 ||"09.01".equals(fileClass.getCode())){
 						Employee bean = new Employee();
 						String code = "";
 						if(null!=department.getTuhao())
