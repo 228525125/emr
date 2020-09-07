@@ -484,7 +484,7 @@ public class EmployeeAction extends BaseAction {
 		return ret;
 	}
 	
-	public Page batchAddFile(WebForm form) {		
+	/*public Page batchAddFile(WebForm form) {		
 		if(null!=form.get("departmentId")&&!"".equals(form.get("departmentId").toString())){
 			Long id = new Long(CommUtil.null2String(form.get("departmentId")));
 			Department department = departmentService.getDepartment(id);
@@ -539,6 +539,20 @@ public class EmployeeAction extends BaseAction {
 				}
 			}
 		}
+		return success2(form, true, null);
+	}*/
+	
+	public Page batchAddFile(WebForm form) {
+		if(("zhangyiya".equals(getUser().getAccount()) || "admin".equals(getUser().getAccount())) && null!=form.get("departmentId")&&!"".equals(form.get("departmentId").toString())){
+			Long id = new Long(CommUtil.null2String(form.get("departmentId")));
+			Department department = departmentService.getDepartment(id);
+			if(null!=department){
+				String code = department.getCode();
+				String sql = "exec add_file '"+code+"'";
+				jdbcService.execute(sql);
+			}
+		}
+		
 		return success2(form, true, null);
 	}
 	
@@ -690,7 +704,8 @@ public class EmployeeAction extends BaseAction {
 			boolean extraEmpty = true;
 			if(null!=file.listFiles()){
 				for(File f :file.listFiles()){
-					if(f.getName().equals(name))
+					String n = f.getName();
+					if(n.equals(name))
 						f.delete();
 					else{
 						String download = "file-backups/"+path;
