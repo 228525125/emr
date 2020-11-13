@@ -100,7 +100,7 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
 		this.store = new Ext.data.JsonStore({
 			url: 'employee.do?cmd=list',
 			root:"result",
-			fields:["id","code","name","fileClass","auxCode","disabled","description","address","department","departmentCode","departmentId","empty","selected","version","extraEmpty","cite","date","checked","checkDate","checker","departmentModel"],
+			fields:["id","code","citeCode","name","fileClass","auxCode","disabled","description","address","department","departmentCode","departmentId","empty","selected","version","extraEmpty","cite","date","checked","checkDate","checker","departmentModel"],
 			listeners:{
 				'beforeload': {fn:function(storeThis,option){
 					storeThis.removeAll();
@@ -312,7 +312,7 @@ EmployeePanel = Ext.extend(Ext.Viewport, {
                                 		var d1 = new Date(Date.parse(value.replace(/-/g, "/"))).getTime();
                                 		var cur = new Date().getTime();
                                 		if(d1>cur-1000*60*60*24*3)
-                                			return "<font color=red>"+value+"</font>"
+                                			return "<font color=red>"+value+"</font>";
                                 	}
                                 	
 	          		    	  		return value;

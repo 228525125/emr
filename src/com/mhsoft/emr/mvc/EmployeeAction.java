@@ -323,9 +323,10 @@ public class EmployeeAction extends BaseAction {
 	
 	/**
 	 * 该方法用于平板模式的文档查询功能，注意：该方法没有对引用的情况进行处理
+	 * 这个方法有问题，如果通过department
 	 * @param form
 	 * @return
-	 */
+	 
 	public Page searchFile(WebForm form) {
 		ServletContext sc = ActionContext.getContext().getSession().getServletContext();
 		String fileSavePath = sc.getInitParameter("uploadPath");
@@ -342,7 +343,7 @@ public class EmployeeAction extends BaseAction {
 				if(-1!=code.toLowerCase().indexOf("work"))            //如果是任务单的情况
 					code = jdbcService.queryForWorkNo(code);
 				else
-					code = departmentService.queryForTuhao(code);
+					code = departmentService.queryForTuhao(code);     //这个方法是基于图号唯一的前提，但目前做不到
 			}
 			
 			qo.addQuery("department.code = ?", new Object[]{code});
@@ -387,15 +388,50 @@ public class EmployeeAction extends BaseAction {
 					
 					//System.out.println(file.getAbsolutePath());
 					//System.out.println(file.listFiles());
-					/*if(null!=file.listFiles()){
-						for(File f :file.listFiles()){
-							if(-1!=f.getName().indexOf(".pdf")){
-								String path = "file-backups/"+e.getCode()+"/"+e.getFileClass().getCode()+"/";
-								files.add(path+f.getName());
-							}
-						}
-					}*/
+					//if(null!=file.listFiles()){
+					//	for(File f :file.listFiles()){
+					//		if(-1!=f.getName().indexOf(".pdf")){
+					//			String path = "file-backups/"+e.getCode()+"/"+e.getFileClass().getCode()+"/";
+					//			files.add(path+f.getName());
+					//		}
+					//	}
+					//}
 				}
+		}
+		
+		form.addResult("files", files);
+		return page("result");
+	}*/
+	
+	public Page searchFile(WebForm form) {
+		ServletContext sc = ActionContext.getContext().getSession().getServletContext();
+		String fileSavePath = sc.getInitParameter("uploadPath");
+		String queryForFileType = sc.getInitParameter("queryForFileType");
+		
+		QueryObject qo = form.toPo(QueryObject.class);
+		IPageList pageList = null;
+		List<String> files = new ArrayList<String>();
+		
+		//根据物料查询
+		if(null!=form.get("serial")&&!"".equals(form.get("serial").toString())){
+			String serial = form.get("serial").toString();
+			qo.addQuery(" code like '%"+serial+"%'", null);
+			qo.addQuery(" disabled = ?", new Object[]{false});
+			
+			pageList = service.getEmployeeBy(qo);
+			List list = pageList.getResult();
+			if(null!=list){
+				for(Object o : list){
+					Employee e = (Employee) o;			
+					File file = new File(fileSavePath+e.getCode()+"/"+e.getFileClass().getCode()+"/"+e.getSelected());
+					if(file.exists()){
+						if(isQueryForFileType(file.getName(), queryForFileType)){
+							String path = "file-backups/"+e.getCode()+"/"+e.getFileClass().getCode()+"/";
+							files.add(path+file.getName());
+						}
+					}
+				}
+			}
 		}
 		
 		form.addResult("files", files);
